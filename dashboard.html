@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#00572C">
+    <meta name="description" content="IFSU SAGE dashboard demo for research gap identification.">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="ifsu-icon.svg" type="image/svg+xml">
+    <title>Dashboard - IFSU Research Gap Identification System</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        /* ==========================================================================
+           1. VISUAL IDENTITY & THEME VARIABLES
+           ========================================================================== */
+        :root {
+            --primary-dark-green: #00572C;
+            --secondary-green: #00743B;
+            --deep-green: #003D22;
+            --mustard-gold: #F5B800;
+            --light-gold: #FFD95A;
+            --white: #FFFFFF;
+            --soft-bg: #F7F8F5;
+            --dark-text: #10261B;
+            --muted-text: #66756D;
+            --card-border: rgba(230, 235, 232, 0.9);
+            --font-family: 'Inter', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: var(--font-family);
+        }
+
+        body, html {
+            height: 100%;
+            width: 100%;
+            background-color: var(--soft-bg);
+            color: var(--dark-text);
+            overflow-x: hidden;
+        }
+
+        /* Campus Overlay Background */
+        .bg-wrapper {
+            min-height: 100vh;
+            width: 100%;
+            background: linear-gradient(rgba(0, 61, 34, 0.22), rgba(0, 61, 34, 0.22)), 
+                        url('https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?q=80&w=1920&auto=format&fit=crop') center/cover no-repeat fixed;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ==========================================================================
+           2. HEADER BANNER (Screen Title without numbers/badges)
+           ========================================================================== */
+        .dashboard-header-bar {
+            background: linear-gradient(135deg, #003D22, #00572C);
+            color: var(--white);
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 4px solid var(--mustard-gold);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+
+        .header-brand-group {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .ifsu-header-logo {
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
+            filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.25));
+        }
+
+        .header-title-container h1 {
+            font-size: 1.45rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .header-title-container p {
+            font-size: 0.85rem;
+            opacity: 0.85;
+            margin-top: 2px;
+        }
+
+        .header-institution-info {
+            text-align: right;
+        }
+
+        .header-institution-info .inst-name {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--mustard-gold);
+        }
+
+        .header-institution-info .sub-text {
+            font-size: 0.78rem;
+            opacity: 0.85;
+        }
+
+        .header-institution-info .user-name {
+            margin-top: 4px;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.76rem;
+        }
+
+        /* ==========================================================================
+           3. MAIN LAYOUT (Sidebar + Expanded Dashboard Content)
+           ========================================================================== */
+        .main-workspace {
+            display: flex;
+            flex: 1;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            width: 270px;
+            background: linear-gradient(180deg, #003D22 0%, #00572C 100%);
+            border-radius: 20px;
+            padding: 22px 16px;
+            color: var(--white);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+            flex-shrink: 0;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 18px;
+            border-bottom: 1px solid rgba(255,255,255,0.15);
+            margin-bottom: 12px;
+        }
+
+        .ifsu-sidebar-logo {
+            width: 44px;
+            height: 44px;
+            object-fit: contain;
+            background: #FFFFFF;
+            border-radius: 50%;
+            padding: 2px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .sidebar-brand text {
+            font-weight: 800;
+            font-size: 1.1rem;
+            line-height: 1.2;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 13px 18px;
+            border-radius: 12px;
+            color: rgba(255,255,255,0.85);
+            text-decoration: none;
+            font-size: 0.92rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: var(--mustard-gold);
+            color: var(--primary-dark-green);
+            font-weight: 700;
+        }
+
+        .nav-item.logout-btn {
+            margin-top: auto;
+            color: #FF9999;
+        }
+
+        .nav-item.logout-btn:hover {
+            background: rgba(255, 77, 77, 0.2);
+            color: #FF6666;
+        }
+
+        /* Full Width Content Area */
+        .content-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 100%;
+        }
+
+        .panel-card {
+            background: rgba(255, 255, 255, 0.96);
+            border-radius: 20px;
+            border: 1px solid var(--card-border);
+            padding: 24px;
+            box-shadow: 0 6px 25px rgba(0,0,0,0.06);
+            backdrop-filter: blur(4px);
+        }
+
+        .welcome-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary-dark-green);
+        }
+
+        .welcome-sub {
+            font-size: 0.88rem;
+            color: var(--muted-text);
+            margin-bottom: 20px;
+        }
+
+        /* ==========================================================================
+           4. TOP METRIC CARDS (Exact Match from Screenshot)
+           ========================================================================== */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 22px;
+        }
+
+        .metric-card {
+            background: #FFFFFF;
+            border-radius: 16px;
+            padding: 18px 22px;
+            border: 1px solid #E2E8E4;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+        }
+
+        .metric-card.bg-light-green { background: #EAF5ED; border-color: #D3EADC; }
+        .metric-card.bg-light-gold { background: #FEF8E7; border-color: #F8E8C2; }
+        .metric-card.bg-light-mint { background: #EBF8F2; border-color: #D3EFE2; }
+        .metric-card.bg-light-orange { background: #FFF2EB; border-color: #FCDCCB; }
+
+        .metric-val { font-size: 1.85rem; font-weight: 800; line-height: 1.1; }
+        .metric-val.green { color: #00572C; }
+        .metric-val.gold { color: #B88600; }
+        .metric-val.mint { color: #00743B; }
+        .metric-val.orange { color: #D94800; }
+
+        .metric-lbl { font-size: 0.82rem; color: var(--muted-text); font-weight: 700; margin-top: 4px; }
+        .metric-icon { font-size: 1.8rem; opacity: 0.85; }
+
+        /* ==========================================================================
+           5. CONCEPTUAL FRAMEWORK WORKFLOW (Exact Match from Screenshot)
+           ========================================================================== */
+        .section-heading {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--dark-text);
+            margin-bottom: 16px;
+        }
+
+        .framework-flow {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .framework-step-card {
+            background: #FFFFFF;
+            border: 1.5px solid #DDF0E5;
+            border-radius: 14px;
+            padding: 16px 12px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .step-circle-badge {
+            width: 28px;
+            height: 28px;
+            background: var(--mustard-gold);
+            color: var(--primary-dark-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+        }
+
+        .step-icon-box {
+            font-size: 1.4rem;
+            color: var(--primary-dark-green);
+            margin-bottom: 8px;
+        }
+
+        .step-title-text {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--dark-text);
+            line-height: 1.2;
+        }
+
+        /* Flow Arrow Indicator */
+        .framework-step-card:not(:last-child)::after {
+            content: "➔";
+            position: absolute;
+            right: -12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #A0B5AA;
+            font-size: 0.9rem;
+            z-index: 2;
+        }
+
+        /* ==========================================================================
+           6. BOTTOM TWO PANELS: RECENT PROPOSALS & SYSTEM STATUS
+           ========================================================================== */
+        .bottom-panels-grid {
+            display: grid;
+            grid-template-columns: 1.4fr 1fr;
+            gap: 20px;
+        }
+
+        .sub-panel {
+            background: #FFFFFF;
+            border-radius: 16px;
+            border: 1px solid #E2E8E4;
+            padding: 20px;
+        }
+
+        .sub-panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .sub-panel-title {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--dark-text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .view-all-btn {
+            background: var(--light-gold);
+            color: #8A6600;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .view-all-btn:hover { background: var(--mustard-gold); color: var(--primary-dark-green); }
+
+        /* Recent Proposals Table */
+        .proposals-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.82rem;
+        }
+
+        .proposals-table th {
+            background: var(--soft-bg);
+            color: var(--muted-text);
+            text-align: left;
+            padding: 10px 12px;
+            font-weight: 700;
+            border-bottom: 2px solid #E2E8E4;
+        }
+
+        .proposals-table td {
+            padding: 11px 12px;
+            border-bottom: 1px solid #EBF0EC;
+            color: var(--dark-text);
+        }
+
+        .proposals-table tr:hover td {
+            background: #F4F9F6;
+        }
+
+        /* System Status Progress Indicators */
+        .status-item {
+            margin-bottom: 16px;
+        }
+
+        .status-info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.82rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .status-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--dark-text);
+        }
+
+        .status-count {
+            color: var(--muted-text);
+        }
+
+        .progress-bar-bg {
+            height: 10px;
+            background: #EAF0EC;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            border-radius: 20px;
+            transition: width 0.5s ease;
+        }
+
+        .fill-green { background: var(--primary-dark-green); }
+        .fill-gold { background: var(--mustard-gold); }
+        .fill-mint { background: var(--secondary-green); }
+
+        /* Toast Popup */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--primary-dark-green);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            font-weight: 600;
+            font-size: 0.9rem;
+            z-index: 9999;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+            border-left: 5px solid var(--mustard-gold);
+        }
+
+        .toast.show { opacity: 1; transform: translateY(0); }
+
+        @media (max-width: 1200px) {
+            .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+            .framework-flow { grid-template-columns: repeat(3, 1fr); gap: 16px; }
+            .framework-step-card:not(:last-child)::after { display: none; }
+            .bottom-panels-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            .main-workspace { flex-direction: column; }
+            .sidebar { width: 100%; }
+            .metrics-grid { grid-template-columns: 1fr; }
+            .framework-flow { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body class="bg-wrapper">
+
+    <!-- Top Header Banner (No numbers or badges) -->
+    <header class="dashboard-header-bar">
+        <div class="header-brand-group">
+            <img src="./assets/ifsu-seal.png" alt="IFSU Official Seal" class="ifsu-header-logo">
+            <div class="header-title-container">
+                <h1>Dashboard</h1>
+                <p>Research Gap Identification System for IFSU Research Proposal Abstracts</p>
+            </div>
+        </div>
+        <div class="header-institution-info">
+            <div class="inst-name">Ifugao State University (IFSU)</div>
+            <div class="sub-text">Semantic Retrieval for Research Proposal Abstracts</div>
+        </div>
+    </header>
+
+    <div class="main-workspace">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <img src="./assets/ifsu-seal.png" alt="IFSU Official Seal" class="ifsu-sidebar-logo">
+                <div>
+                    <div style="font-weight:800; font-size:1rem;">IFSU RGIS</div>
+                    <div style="font-size:0.72rem; opacity:0.8;">Semantic Gap System</div>
+                </div>
+            </div>
+
+            <a href="#dashboard" class="nav-item active" aria-current="page" onclick="navigate('Dashboard', this)"><i class="fa-solid fa-house" aria-hidden="true"></i> Dashboard</a>
+            <a href="./research-proposals.html" class="nav-item" onclick="navigate('Research Proposals', this)"><i class="fa-solid fa-file-lines" aria-hidden="true"></i> Research Proposals</a>
+            <a href="./literature-corpus.html" class="nav-item" onclick="navigate('Literature Corpus', this)"><i class="fa-solid fa-book" aria-hidden="true"></i> Literature Corpus</a>
+            <a href="./model-retrieval.html" class="nav-item" onclick="navigate('Model Retrieval', this)"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> Model Retrieval</a>
+            <a href="./retrieval-results.html" class="nav-item" onclick="navigate('Retrieval Results', this)"><i class="fa-solid fa-list-check" aria-hidden="true"></i> Retrieval Results</a>
+            <a href="./relevance-evaluation.html" class="nav-item"><i class="fa-solid fa-user-check" aria-hidden="true"></i> Evaluation</a>
+            <a href="./evaluation-agreement.html" class="nav-item"><i class="fa-solid fa-chart-column" aria-hidden="true"></i> Evaluation Agreement</a>
+            <a href="./model-performance.html" class="nav-item"><i class="fa-solid fa-chart-column" aria-hidden="true"></i> Results & Comparison</a>
+            <a href="./reports-deployment.html" class="nav-item"><i class="fa-solid fa-file-export" aria-hidden="true"></i> Reports</a>
+            <a href="#settings" class="nav-item" onclick="navigate('Settings', this)"><i class="fa-solid fa-gear" aria-hidden="true"></i> Settings</a>
+            <a href="./index.html" class="nav-item logout-btn" onclick="logout(event)"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Logout</a>
+        </aside>
+
+        <!-- Full Width Content Area (No right-side explanation panel) -->
+        <main class="content-area">
+            
+            <div class="panel-card">
+                <h2 class="welcome-title">Dashboard</h2>
+                <p class="welcome-sub">Welcome to the Research Gap Identification System</p>
+
+                <!-- 1. Top Metric Cards (4 Cards Matching Image) -->
+                <div class="metrics-grid">
+                    <div class="metric-card bg-light-green">
+                        <div>
+                            <div class="metric-val green">50</div>
+                            <div class="metric-lbl">Research Proposals</div>
+                        </div>
+                        <i class="fa-solid fa-file-lines metric-icon green"></i>
+                    </div>
+
+                    <div class="metric-card bg-light-gold">
+                        <div>
+                            <div class="metric-val gold">750</div>
+                            <div class="metric-lbl">Published Abstracts</div>
+                        </div>
+                        <i class="fa-solid fa-database metric-icon gold"></i>
+                    </div>
+
+                    <div class="metric-card bg-light-mint">
+                        <div>
+                            <div class="metric-val mint">3</div>
+                            <div class="metric-lbl">Embedding Models</div>
+                        </div>
+                        <i class="fa-solid fa-cubes metric-icon mint"></i>
+                    </div>
+
+                    <div class="metric-card bg-light-orange">
+                        <div>
+                            <div class="metric-val orange">2,130</div>
+                            <div class="metric-lbl">Query-Document Pairs</div>
+                        </div>
+                        <i class="fa-solid fa-link metric-icon orange"></i>
+                    </div>
+                </div>
+
+                <!-- 2. Conceptual Framework Sequential Workflow (6 Steps Matching Image) -->
+                <h3 class="section-heading">Conceptual Framework</h3>
+                <div class="framework-flow">
+                    <div class="framework-step-card">
+                        <div class="step-circle-badge">1</div>
+                        <div class="step-icon-box"><i class="fa-solid fa-file-invoice"></i></div>
+                        <div class="step-title-text">Problem Definition</div>
+                    </div>
+
+                    <div class="framework-step-card">
+                        <div class="step-circle-badge">2</div>
+                        <div class="step-icon-box"><i class="fa-solid fa-database"></i></div>
+                        <div class="step-title-text">Dataset Construction</div>
+                    </div>
+
+                    <div class="framework-step-card">
+                        <div class="step-circle-badge">3</div>
+                        <div class="step-icon-box"><i class="fa-solid fa-gear"></i></div>
+                        <div class="step-title-text">Semantic Representation</div>
+                    </div>
+
+                    <div class="framework-step-card">
+                        <div class="step-circle-badge">4</div>
+                        <div class="step-icon-box"><i class="fa-solid fa-chart-simple"></i></div>
+                        <div class="step-title-text">Relevance Evaluation</div>
+                    </div>
+
+                    <div class="framework-step-card">
+                        <div class="step-circle-badge">5</div>
+                        <div class="step-icon-box"><i class="fa-solid fa-chart-line"></i></div>
+                        <div class="step-title-text">Benchmarking & Analysis</div>
+                    </div>
+
+                    <div class="framework-step-card">
+                        <div class="step-circle-badge">6</div>
+                        <div class="step-icon-box"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+                        <div class="step-title-text">Deployment & Synthesis</div>
+                    </div>
+                </div>
+
+                <!-- 3. Bottom Panels: Recent Proposals Table & System Status Progress Bars -->
+                <div class="bottom-panels-grid">
+                    
+                    <!-- Recent Research Proposals -->
+                    <div class="sub-panel">
+                        <div class="sub-panel-header">
+                            <div class="sub-panel-title">
+                                <i class="fa-solid fa-file-lines text-gold"></i>
+                                Recent Research Proposals
+                            </div>
+                            <button class="view-all-btn" onclick="navigate('Research Proposals')">View All</button>
+                        </div>
+
+                        <table class="proposals-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Title</th>
+                                    <th>Research Area</th>
+                                    <th>Date Added</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>1</strong></td>
+                                    <td>Sustainable Agriculture...</td>
+                                    <td>Agriculture</td>
+                                    <td>2026-01-10</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>2</strong></td>
+                                    <td>Digital Learning Strategies...</td>
+                                    <td>Education</td>
+                                    <td>2026-01-12</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>3</strong></td>
+                                    <td>Indigenous Knowledge...</td>
+                                    <td>Social Science</td>
+                                    <td>2026-01-15</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>4</strong></td>
+                                    <td>Climate Change Adaptation...</td>
+                                    <td>Environment</td>
+                                    <td>2026-01-18</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>5</strong></td>
+                                    <td>Local Governance...</td>
+                                    <td>Public Administration</td>
+                                    <td>2026-01-20</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- System Status Progress Indicators -->
+                    <div class="sub-panel">
+                        <div class="sub-panel-header">
+                            <div class="sub-panel-title">
+                                <i class="fa-solid fa-chart-pie text-green"></i>
+                                System Status
+                            </div>
+                        </div>
+
+                        <div class="status-item">
+                            <div class="status-info-row">
+                                <span class="status-label"><i class="fa-solid fa-file-lines"></i> Research Proposals</span>
+                                <span class="status-count">50 / 100 (50%)</span>
+                            </div>
+                            <div class="progress-bar-bg">
+                                <div class="progress-bar-fill fill-green" style="width: 50%;"></div>
+                            </div>
+                        </div>
+
+                        <div class="status-item">
+                            <div class="status-info-row">
+                                <span class="status-label"><i class="fa-solid fa-database"></i> Published Abstracts</span>
+                                <span class="status-count">750 / 1,000 (75%)</span>
+                            </div>
+                            <div class="progress-bar-bg">
+                                <div class="progress-bar-fill fill-gold" style="width: 75%;"></div>
+                            </div>
+                        </div>
+
+                        <div class="status-item">
+                            <div class="status-info-row">
+                                <span class="status-label"><i class="fa-solid fa-cubes"></i> Embedding Models</span>
+                                <span class="status-count">3 / 5 (60%)</span>
+                            </div>
+                            <div class="progress-bar-bg">
+                                <div class="progress-bar-fill fill-mint" style="width: 60%;"></div>
+                            </div>
+                        </div>
+
+                        <div class="status-item">
+                            <div class="status-info-row">
+                                <span class="status-label"><i class="fa-solid fa-link"></i> Query-Document Pairs</span>
+                                <span class="status-count">2,130 / 3,000 (71%)</span>
+                            </div>
+                            <div class="progress-bar-bg">
+                                <div class="progress-bar-fill fill-gold" style="width: 71%;"></div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <script>
+        let currentUserName;
+        try {
+            currentUserName = window.sessionStorage.getItem('ifsu-sage-demo-username');
+        } catch (error) {
+            console.error('Unable to read the demo session:', error);
+            window.location.replace('./index.html');
+        }
+
+        if (!currentUserName) {
+            window.location.replace('./index.html');
+        } else {
+            const userName = document.createElement('div');
+            userName.className = 'user-name';
+            userName.textContent = `Signed in as ${currentUserName}`;
+            document.querySelector('.header-institution-info').append(userName);
+
+            if ('serviceWorker' in navigator && window.isSecureContext) {
+                navigator.serviceWorker.register('./service-worker.js')
+                    .catch((error) => console.error('Service worker registration failed:', error));
+            }
+        }
+
+        let toastTimeout;
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            window.clearTimeout(toastTimeout);
+            toastTimeout = window.setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        function navigate(moduleName, navItem) {
+            if (moduleName === 'Research Proposals') {
+                window.location.assign('./research-proposals.html');
+                return;
+            }
+            if (moduleName === 'Literature Corpus') {
+                window.location.assign('./literature-corpus.html');
+                return;
+            }
+            if (moduleName === 'Model Retrieval') {
+                window.location.assign('./model-retrieval.html');
+                return;
+            }
+            if (moduleName === 'Retrieval Results') {
+                window.location.assign('./retrieval-results.html');
+                return;
+            }
+
+            if (navItem) {
+                document.querySelectorAll('.sidebar .nav-item').forEach((item) => {
+                    item.classList.toggle('active', item === navItem);
+                    if (item === navItem) item.setAttribute('aria-current', 'page');
+                    else item.removeAttribute('aria-current');
+                });
+            }
+            showToast(`Navigating to ${moduleName}...`);
+        }
+
+        function logout(event) {
+            if (event) event.preventDefault();
+            showToast('Logging out of the dashboard...');
+            window.setTimeout(() => {
+                try {
+                    window.sessionStorage.removeItem('ifsu-sage-demo-username');
+                } catch (error) {
+                    console.error('Unable to clear the demo session:', error);
+                    showToast('Unable to end the session in this browser. Please try again.');
+                    return;
+                }
+                window.location.assign('./index.html');
+            }, 800);
+        }
+    </script>
+</body>
+</html>

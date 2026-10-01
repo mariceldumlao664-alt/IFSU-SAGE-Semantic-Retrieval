@@ -1,0 +1,19 @@
+{
+  "name": "IFSU Semantic Abstract Analysis & Gap Evaluation System",
+  "short_name": "IFSU SAGE",
+  "description": "Semantic abstract analysis and research gap evaluation for Ifugao State University.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#00572c",
+  "theme_color": "#00572c",
+  "icons": [
+    {
+      "src": "ifsu-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

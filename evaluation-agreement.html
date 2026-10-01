@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#00572C">
+    <meta name="description" content="Review illustrative inter-rater agreement and adjudication for IFSU SAGE.">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="ifsu-icon.svg" type="image/svg+xml">
+    <title>Evaluation Agreement - IFSU RGIS</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        /* ==========================================================================
+           1. VISUAL IDENTITY & THEME VARIABLES
+           ========================================================================== */
+        :root {
+            --primary-dark-green: #00572C;
+            --secondary-green: #00743B;
+            --deep-green: #003D22;
+            --mustard-gold: #F5B800;
+            --light-gold: #FFD95A;
+            --white: #FFFFFF;
+            --soft-bg: #F7F8F5;
+            --dark-text: #10261B;
+            --muted-text: #66756D;
+            --card-border: rgba(230, 235, 232, 0.9);
+            --font-family: 'Inter', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: var(--font-family);
+        }
+
+        body, html {
+            height: 100%;
+            width: 100%;
+            background-color: var(--soft-bg);
+            color: var(--dark-text);
+            overflow-x: hidden;
+        }
+
+        /* Campus Background Overlay */
+        .bg-wrapper {
+            min-height: 100vh;
+            width: 100%;
+            background: linear-gradient(135deg, #e8f0e9, #f7f8f5 55%, #f5efd9);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ==========================================================================
+           2. HEADER BANNER (Without numbers or badges)
+           ========================================================================== */
+        .dashboard-header-bar {
+            background: linear-gradient(135deg, #003D22, #00572C);
+            color: var(--white);
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 4px solid var(--mustard-gold);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+
+        .header-brand-group {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .ifsu-header-logo {
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
+            filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.25));
+        }
+
+        .header-title-container h1 {
+            font-size: 1.45rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .header-title-container p {
+            font-size: 0.85rem;
+            opacity: 0.85;
+            margin-top: 2px;
+        }
+
+        .header-institution-info {
+            text-align: right;
+        }
+
+        .header-institution-info .inst-name {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--mustard-gold);
+        }
+
+        .header-institution-info .sub-text {
+            font-size: 0.78rem;
+            opacity: 0.85;
+        }
+
+        .header-institution-info .user-name {
+            margin-top: 4px;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.76rem;
+        }
+
+        /* ==========================================================================
+           3. MAIN WORKSPACE (Sidebar + Full-Width Content Area)
+           ========================================================================== */
+        .main-workspace {
+            display: flex;
+            flex: 1;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            width: 270px;
+            background: linear-gradient(180deg, #003D22 0%, #00572C 100%);
+            border-radius: 20px;
+            padding: 22px 16px;
+            color: var(--white);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+            flex-shrink: 0;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 18px;
+            border-bottom: 1px solid rgba(255,255,255,0.15);
+            margin-bottom: 12px;
+        }
+
+        .ifsu-sidebar-logo {
+            width: 44px;
+            height: 44px;
+            object-fit: contain;
+            background: #FFFFFF;
+            border-radius: 50%;
+            padding: 2px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .sidebar-brand text {
+            font-weight: 800;
+            font-size: 1.1rem;
+            line-height: 1.2;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 13px 18px;
+            border-radius: 12px;
+            color: rgba(255,255,255,0.85);
+            text-decoration: none;
+            font-size: 0.92rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: var(--mustard-gold);
+            color: var(--primary-dark-green);
+            font-weight: 700;
+        }
+
+        .nav-item.logout-btn {
+            margin-top: auto;
+            color: #FF9999;
+        }
+
+        .nav-item.logout-btn:hover {
+            background: rgba(255, 77, 77, 0.2);
+            color: #FF6666;
+        }
+
+        /* Expanded Workspace Panel */
+        .content-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 100%;
+        }
+
+        .panel-card {
+            background: rgba(255, 255, 255, 0.96);
+            border-radius: 20px;
+            border: 1px solid var(--card-border);
+            padding: 28px;
+            box-shadow: 0 6px 25px rgba(0,0,0,0.06);
+            backdrop-filter: blur(4px);
+        }
+
+        /* ==========================================================================
+           4. MODULE TITLE & SUBTITLE BANNER
+           ========================================================================== */
+        .module-header-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 6px;
+        }
+
+        .header-icon-gold {
+            width: 48px;
+            height: 48px;
+            background: var(--mustard-gold);
+            color: var(--primary-dark-green);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+        }
+
+        .module-header-row h2 {
+            font-size: 1.55rem;
+            font-weight: 800;
+            color: var(--dark-text);
+        }
+
+        .module-description {
+            font-size: 0.9rem;
+            color: var(--muted-text);
+            margin-left: 62px;
+            margin-bottom: 24px;
+        }
+
+        /* ==========================================================================
+           5. TWO-COLUMN GRID: AGREEMENT SUMMARY & HEATMAP MATRIX
+           ========================================================================== */
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: 0.9fr 1.1fr;
+            gap: 22px;
+            margin-bottom: 24px;
+        }
+
+        /* Card Container Styling */
+        .analytics-card {
+            background: var(--white);
+            border: 1px solid #E2E8E4;
+            border-radius: 16px;
+            padding: 22px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-heading-text {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--dark-text);
+            margin-bottom: 16px;
+        }
+
+        .card-subtext {
+            font-size: 0.8rem;
+            color: var(--muted-text);
+            margin-top: -12px;
+            margin-bottom: 16px;
+        }
+
+        /* Inter-Rater Summary Table */
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            margin-top: 4px;
+        }
+
+        .summary-table th {
+            background: #FEF8E7;
+            color: var(--dark-text);
+            padding: 12px 16px;
+            font-weight: 800;
+            text-align: left;
+            border: 1px solid #F4E2B8;
+        }
+
+        .summary-table td {
+            padding: 14px 16px;
+            border: 1px solid #EBF0EC;
+            color: var(--dark-text);
+        }
+
+        .summary-table td:last-child {
+            font-weight: 700;
+        }
+
+        /* Heatmap Grid Matrix */
+        .heatmap-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            padding: 10px 0;
+        }
+
+        .heatmap-wrapper {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .y-axis-label {
+            position: absolute;
+            left: -42px;
+            top: 50%;
+            transform: translateY(-50%) rotate(-90deg);
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--dark-text);
+            white-space: nowrap;
+        }
+
+        .x-axis-label {
+            margin-top: 10px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--dark-text);
+        }
+
+        .heatmap-matrix {
+            display: grid;
+            grid-template-columns: 32px repeat(3, 72px);
+            grid-template-rows: repeat(3, 58px) 30px;
+            gap: 6px;
+            align-items: center;
+            text-align: center;
+        }
+
+        .axis-num {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--dark-text);
+        }
+
+        /* Heatmap Cells with Specific Color Densities */
+        .heatmap-cell {
+            height: 100%;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            font-weight: 800;
+            transition: transform 0.2s ease;
+            cursor: pointer;
+        }
+
+        .heatmap-cell:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .color-lvl-0 { background: #FEF8E7; color: var(--dark-text); }
+        .color-lvl-1 { background: #D2E8D8; color: var(--dark-text); }
+        .color-lvl-2 { background: #71B583; color: var(--white); }
+        .color-lvl-3 { background: #136A3A; color: var(--white); }
+        .color-lvl-4 { background: #003D22; color: var(--white); }
+
+        /* Color Scale Legend Bar */
+        .color-legend-bar {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 180px;
+            width: 38px;
+        }
+
+        .legend-gradient {
+            width: 14px;
+            height: 100%;
+            background: linear-gradient(to top, #FEF8E7, #71B583, #003D22);
+            border-radius: 4px;
+            margin: 6px 0;
+        }
+
+        .legend-val {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--muted-text);
+        }
+
+        /* ==========================================================================
+           6. ADJUDICATION OF DISAGREEMENTS INFO BOX
+           ========================================================================== */
+        .adjudication-box {
+            background: #EAF5ED;
+            border: 1px solid #CDE6D3;
+            border-radius: 14px;
+            padding: 18px 22px;
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+        }
+
+        .adjudication-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--primary-dark-green);
+            color: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .adjudication-content h3 {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--primary-dark-green);
+            margin-bottom: 4px;
+        }
+
+        .adjudication-content p {
+            font-size: 0.88rem;
+            color: var(--dark-text);
+            line-height: 1.5;
+        }
+
+        /* Toast Popup */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--primary-dark-green);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            font-weight: 600;
+            font-size: 0.9rem;
+            z-index: 9999;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+            border-left: 5px solid var(--mustard-gold);
+        }
+
+        .toast.show { opacity: 1; transform: translateY(0); }
+
+        @media (max-width: 992px) {
+            .main-workspace { flex-direction: column; }
+            .sidebar { width: 100%; }
+            .analytics-grid { grid-template-columns: 1fr; }
+            .module-description { margin-left: 0; }
+        }
+    </style>
+</head>
+<body class="bg-wrapper">
+
+    <!-- Top Header Banner (No numbers or badges) -->
+    <header class="dashboard-header-bar">
+        <div class="header-brand-group">
+            <img src="./assets/ifsu-seal.png" alt="IFSU Official Seal" class="ifsu-header-logo">
+            <div class="header-title-container">
+                <h1>Evaluation Agreement</h1>
+                <p>Research Gap Identification System for IFSU Research Proposal Abstracts</p>
+            </div>
+        </div>
+        <div class="header-institution-info">
+            <div class="inst-name">Ifugao State University (IFSU)</div>
+            <div class="sub-text">Semantic Retrieval for Research Proposal Abstracts</div>
+        </div>
+    </header>
+
+    <div class="main-workspace">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <img src="./assets/ifsu-seal.png" alt="IFSU Official Seal" class="ifsu-sidebar-logo">
+                <div>
+                    <div style="font-weight:800; font-size:1rem;">IFSU RGIS</div>
+                    <div style="font-size:0.72rem; opacity:0.8;">Semantic Gap System</div>
+                </div>
+            </div>
+
+            <a href="./dashboard.html" class="nav-item"><i class="fa-solid fa-house" aria-hidden="true"></i> Dashboard</a>
+            <a href="./research-proposals.html" class="nav-item"><i class="fa-solid fa-file-lines" aria-hidden="true"></i> Research Proposals</a>
+            <a href="./literature-corpus.html" class="nav-item"><i class="fa-solid fa-book" aria-hidden="true"></i> Literature Corpus</a>
+            <a href="./model-retrieval.html" class="nav-item"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> Model Retrieval</a>
+            <a href="./retrieval-results.html" class="nav-item"><i class="fa-solid fa-list-check" aria-hidden="true"></i> Retrieval Results</a>
+            <a href="./relevance-evaluation.html" class="nav-item"><i class="fa-solid fa-user-check" aria-hidden="true"></i> Evaluation</a>
+            <a href="./evaluation-agreement.html" class="nav-item active" aria-current="page"><i class="fa-solid fa-chart-column" aria-hidden="true"></i> Evaluation Agreement</a>
+            <a href="./model-performance.html" class="nav-item"><i class="fa-solid fa-chart-column" aria-hidden="true"></i> Results & Comparison</a>
+            <a href="./reports-deployment.html" class="nav-item"><i class="fa-solid fa-file-export" aria-hidden="true"></i> Reports</a>
+            <a href="#settings" class="nav-item" onclick="navigate('Settings', event)"><i class="fa-solid fa-gear" aria-hidden="true"></i> Settings</a>
+            <a href="./index.html" class="nav-item logout-btn" onclick="logout(event)"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Logout</a>
+        </aside>
+
+        <!-- Full-Width Content Area (No right-side process explanation panel) -->
+        <main class="content-area">
+            
+            <div class="panel-card">
+                
+                <!-- 1. Header & Description -->
+                <div class="module-header-row">
+                    <div class="header-icon-gold">
+                        <i class="fa-solid fa-chart-simple"></i>
+                    </div>
+                    <h2>Evaluation Agreement</h2>
+                </div>
+                <p class="module-description">Demo analytics only: these agreement metrics and rater counts are illustrative, not calculated from saved evaluations.</p>
+
+                <!-- 2. Analytics Grid: Summary Table & Heatmap Matrix -->
+                <div class="analytics-grid">
+                    
+                    <!-- Left Column: Inter-Rater Summary Table -->
+                    <div class="analytics-card">
+                        <div class="card-heading-text">Inter-Rater Agreement Summary</div>
+                        
+                        <table class="summary-table">
+                            <thead>
+                                <tr>
+                                    <th>Metric</th>
+                                    <th>Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Exact Agreement</td>
+                                    <td>84.3%</td>
+                                </tr>
+                                <tr>
+                                    <td>Weighted Cohen's Kappa</td>
+                                    <td>0.795</td>
+                                </tr>
+                                <tr>
+                                    <td>Agreement Level</td>
+                                    <td>Substantial</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Right Column: Heatmap Matrix -->
+                    <div class="analytics-card">
+                        <div class="card-heading-text">Rater Agreement Heatmap</div>
+                        <div class="card-subtext">Number of abstracts by rater scores (0 = Not Relevant, 1 = Partially Relevant, 2 = Highly Relevant)</div>
+
+                        <div class="heatmap-container">
+                            <div class="heatmap-wrapper">
+                                <div class="y-axis-label">Rater 2 Score</div>
+                                
+                                <div class="heatmap-matrix">
+                                    <!-- Row 0 -->
+                                    <span class="axis-num">0</span>
+                                    <div class="heatmap-cell color-lvl-1" onclick="showToast('Rater 1: 0, Rater 2: 0 → 45 abstracts')">45</div>
+                                    <div class="heatmap-cell color-lvl-0" onclick="showToast('Rater 1: 1, Rater 2: 0 → 12 abstracts')">12</div>
+                                    <div class="heatmap-cell color-lvl-0" onclick="showToast('Rater 1: 2, Rater 2: 0 → 3 abstracts')">3</div>
+
+                                    <!-- Row 1 -->
+                                    <span class="axis-num">1</span>
+                                    <div class="heatmap-cell color-lvl-0" onclick="showToast('Rater 1: 0, Rater 2: 1 → 10 abstracts')">10</div>
+                                    <div class="heatmap-cell color-lvl-4" onclick="showToast('Rater 1: 1, Rater 2: 1 → 180 abstracts')">180</div>
+                                    <div class="heatmap-cell color-lvl-1" onclick="showToast('Rater 1: 2, Rater 2: 1 → 20 abstracts')">20</div>
+
+                                    <!-- Row 2 -->
+                                    <span class="axis-num">2</span>
+                                    <div class="heatmap-cell color-lvl-0" onclick="showToast('Rater 1: 0, Rater 2: 2 → 4 abstracts')">4</div>
+                                    <div class="heatmap-cell color-lvl-0" onclick="showToast('Rater 1: 1, Rater 2: 2 → 18 abstracts')">18</div>
+                                    <div class="heatmap-cell color-lvl-3" onclick="showToast('Rater 1: 2, Rater 2: 2 → 120 abstracts')">120</div>
+
+                                    <!-- X Axis Headers -->
+                                    <span></span>
+                                    <span class="axis-num">0</span>
+                                    <span class="axis-num">1</span>
+                                    <span class="axis-num">2</span>
+                                </div>
+
+                                <div class="x-axis-label">Rater 1 Score</div>
+                            </div>
+
+                            <!-- Color Legend Bar -->
+                            <div class="color-legend-bar">
+                                <span class="legend-val">150</span>
+                                <span class="legend-val">100</span>
+                                <div class="legend-gradient"></div>
+                                <span class="legend-val">50</span>
+                                <span class="legend-val">0</span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- 3. Adjudication of Disagreements Box -->
+                <div class="adjudication-box">
+                    <div class="adjudication-icon">
+                        <i class="fa-solid fa-info"></i>
+                    </div>
+                    <div class="adjudication-content">
+                        <h3>Adjudication of Disagreements</h3>
+                        <p>
+                            Abstracts with mismatched ratings between the two evaluators are reviewed and discussed. A final relevance label is assigned through adjudication to create the gold-standard relevance ground truth used for model evaluation.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <script>
+        let currentUserName;
+        try {
+            currentUserName = window.sessionStorage.getItem('ifsu-sage-demo-username');
+        } catch (error) {
+            console.error('Unable to read the demo session:', error);
+            window.location.replace('./index.html');
+        }
+
+        if (!currentUserName) {
+            window.location.replace('./index.html');
+        } else {
+            const userName = document.createElement('div');
+            userName.className = 'user-name';
+            userName.textContent = `Signed in as ${currentUserName}`;
+            document.querySelector('.header-institution-info').append(userName);
+
+            if ('serviceWorker' in navigator && window.isSecureContext) {
+                navigator.serviceWorker.register('./service-worker.js')
+                    .catch((error) => console.error('Service worker registration failed:', error));
+            }
+        }
+
+        let toastTimeout;
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            window.clearTimeout(toastTimeout);
+            toastTimeout = window.setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        function navigate(moduleName, event) {
+            if (event) event.preventDefault();
+            showToast(`${moduleName} is a demo placeholder and is not available yet.`);
+        }
+
+        function logout(event) {
+            if (event) event.preventDefault();
+            showToast('Logging out of the dashboard...');
+            window.setTimeout(() => {
+                try {
+                    window.sessionStorage.removeItem('ifsu-sage-demo-username');
+                } catch (error) {
+                    console.error('Unable to clear the demo session:', error);
+                    showToast('Unable to end the session in this browser. Please try again.');
+                    return;
+                }
+                window.location.assign('./index.html');
+            }, 800);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#00572C">
+    <meta name="description" content="Sign in to the Ifugao State University Research Gap Identification System.">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="ifsu-icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="ifsu-icon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <title>IFSU - Research Gap Identification System</title>
+</head>
+<body class="login-body">
+    <div class="bg-overlay" aria-hidden="true"></div>
+
+    <main class="login-container">
+        <section class="login-card" aria-labelledby="system-title">
+            <div class="logo-wrapper">
+                <img src="assets/ifsu-seal.png" alt="IFSU Official Seal" class="ifsu-logo">
+            </div>
+
+            <header class="card-header">
+                <h1 class="system-title" id="system-title">Research Gap Identification System</h1>
+                <h2 class="university-title">Ifugao State University (IFSU)</h2>
+                <p class="subtitle">Semantic Retrieval for Research Proposal Abstracts</p>
+            </header>
+
+            <form id="loginForm" class="login-form">
+                <div class="input-field-group">
+                    <i class="fa-solid fa-user field-icon left-icon" aria-hidden="true"></i>
+                    <label class="visually-hidden" for="username">Username</label>
+                    <input type="text" id="username" name="username" placeholder="Username" autocomplete="username">
+                </div>
+
+                <div class="input-field-group">
+                    <i class="fa-solid fa-lock field-icon left-icon" aria-hidden="true"></i>
+                    <label class="visually-hidden" for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Password" autocomplete="current-password">
+                    <button type="button" id="togglePassword" class="password-toggle-btn" aria-label="Show password" aria-pressed="false">
+                        <i class="fa-solid fa-eye" id="eyeIcon" aria-hidden="true"></i>
+                    </button>
+                </div>
+
+                <button type="submit" class="login-btn">
+                    <span>Login</span>
+                    <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                </button>
+
+                <div class="form-footer">
+                    <a href="#" id="forgotPasswordLink" class="forgot-link">Forgot Password?</a>
+                </div>
+            </form>
+
+            <div class="bottom-wave-container" aria-hidden="true">
+                <svg viewBox="0 0 500 90" preserveAspectRatio="none" class="wave-svg">
+                    <path d="M0,35 C150,90 350,0 500,50 L500,90 L0,90 Z" fill="#F5B800" opacity="0.85"></path>
+                    <path d="M0,50 C200,15 300,80 500,40 L500,90 L0,90 Z" fill="#00572C"></path>
+                </svg>
+            </div>
+        </section>
+    </main>
+
+    <div id="toastNotification" class="toast" role="status" aria-live="polite"></div>
+    <script src="script.js" defer></script>
+</body>
+</html>

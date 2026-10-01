@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#00572C">
+    <meta name="description" content="Review an illustrative IFSU SAGE abstract relevance evaluation.">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="ifsu-icon.svg" type="image/svg+xml">
+    <title>Relevance Evaluation - IFSU RGIS</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        /* ==========================================================================
+           1. VISUAL IDENTITY & THEME VARIABLES
+           ========================================================================== */
+        :root {
+            --primary-dark-green: #00572C;
+            --secondary-green: #00743B;
+            --deep-green: #003D22;
+            --mustard-gold: #F5B800;
+            --light-gold: #FFD95A;
+            --white: #FFFFFF;
+            --soft-bg: #F7F8F5;
+            --dark-text: #10261B;
+            --muted-text: #66756D;
+            --card-border: rgba(230, 235, 232, 0.9);
+            --font-family: 'Inter', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: var(--font-family);
+        }
+
+        body, html {
+            height: 100%;
+            width: 100%;
+            background-color: var(--soft-bg);
+            color: var(--dark-text);
+            overflow-x: hidden;
+        }
+
+        /* Campus Background Overlay */
+        .bg-wrapper {
+            min-height: 100vh;
+            width: 100%;
+            background: linear-gradient(135deg, #e8f0e9, #f7f8f5 55%, #f5efd9);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ==========================================================================
+           2. HEADER BANNER (Without numbers or badges)
+           ========================================================================== */
+        .dashboard-header-bar {
+            background: linear-gradient(135deg, #003D22, #00572C);
+            color: var(--white);
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 4px solid var(--mustard-gold);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+
+        .header-brand-group {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .ifsu-header-logo {
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
+            filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.25));
+        }
+
+        .header-title-container h1 {
+            font-size: 1.45rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .header-title-container p {
+            font-size: 0.85rem;
+            opacity: 0.85;
+            margin-top: 2px;
+        }
+
+        .header-institution-info {
+            text-align: right;
+        }
+
+        .header-institution-info .inst-name {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--mustard-gold);
+        }
+
+        .header-institution-info .sub-text {
+            font-size: 0.78rem;
+            opacity: 0.85;
+        }
+
+        .header-institution-info .user-name {
+            margin-top: 4px;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.76rem;
+        }
+
+        /* ==========================================================================
+           3. MAIN WORKSPACE (Sidebar + Full-Width Content Area)
+           ========================================================================== */
+        .main-workspace {
+            display: flex;
+            flex: 1;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            width: 270px;
+            background: linear-gradient(180deg, #003D22 0%, #00572C 100%);
+            border-radius: 20px;
+            padding: 22px 16px;
+            color: var(--white);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+            flex-shrink: 0;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 18px;
+            border-bottom: 1px solid rgba(255,255,255,0.15);
+            margin-bottom: 12px;
+        }
+
+        .ifsu-sidebar-logo {
+            width: 44px;
+            height: 44px;
+            object-fit: contain;
+            background: #FFFFFF;
+            border-radius: 50%;
+            padding: 2px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .sidebar-brand text {
+            font-weight: 800;
+            font-size: 1.1rem;
+            line-height: 1.2;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 13px 18px;
+            border-radius: 12px;
+            color: rgba(255,255,255,0.85);
+            text-decoration: none;
+            font-size: 0.92rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: var(--mustard-gold);
+            color: var(--primary-dark-green);
+            font-weight: 700;
+        }
+
+        .nav-item.logout-btn {
+            margin-top: auto;
+            color: #FF9999;
+        }
+
+        .nav-item.logout-btn:hover {
+            background: rgba(255, 77, 77, 0.2);
+            color: #FF6666;
+        }
+
+        /* Expanded Workspace Panel */
+        .content-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 100%;
+        }
+
+        .panel-card {
+            background: rgba(255, 255, 255, 0.96);
+            border-radius: 20px;
+            border: 1px solid var(--card-border);
+            padding: 28px;
+            box-shadow: 0 6px 25px rgba(0,0,0,0.06);
+            backdrop-filter: blur(4px);
+        }
+
+        /* ==========================================================================
+           4. EXPERT EVALUATION HEADER & BANNER
+           ========================================================================== */
+        .evaluation-header-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+
+        .header-icon-gold {
+            width: 50px;
+            height: 50px;
+            background: var(--mustard-gold);
+            color: var(--primary-dark-green);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .evaluation-header-row h2 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--dark-text);
+        }
+
+        .instruction-banner {
+            background: #FEF8E7;
+            border: 1px solid #F6E6BC;
+            border-radius: 14px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .banner-people-icon {
+            font-size: 1.8rem;
+            color: var(--primary-dark-green);
+            flex-shrink: 0;
+        }
+
+        .instruction-text {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--dark-text);
+            line-height: 1.4;
+        }
+
+        /* ==========================================================================
+           5. SIDE-BY-SIDE ABSTRACT COMPARISON PANELS
+           ========================================================================== */
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 22px;
+            margin-bottom: 28px;
+        }
+
+        .abstract-card {
+            background: #FEF8E7;
+            border: 1.5px solid #F6E6BC;
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .abstract-card-title {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--dark-text);
+        }
+
+        .abstract-content-box {
+            background: var(--white);
+            border: 1px solid #EAE0C8;
+            border-radius: 12px;
+            padding: 18px;
+            font-size: 0.95rem;
+            color: var(--dark-text);
+            line-height: 1.6;
+            min-height: 180px;
+            max-height: 240px;
+            overflow-y: auto;
+        }
+
+        /* Custom Scrollbar for Abstract Boxes */
+        .abstract-content-box::-webkit-scrollbar {
+            width: 6px;
+        }
+        .abstract-content-box::-webkit-scrollbar-thumb {
+            background: #CBD5E1;
+            border-radius: 4px;
+        }
+
+        /* ==========================================================================
+           6. GRADED RELEVANCE SCORE SELECTOR (0 - 2)
+           ========================================================================== */
+        .scoring-section {
+            margin-bottom: 28px;
+        }
+
+        .scoring-label {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--dark-text);
+            margin-bottom: 14px;
+            display: block;
+        }
+
+        .score-buttons-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .score-btn {
+            background: var(--white);
+            border: 2px solid #DDF0E5;
+            border-radius: 14px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .score-number-badge {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: #F1F5F2;
+            color: var(--dark-text);
+            font-weight: 900;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .score-text {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--dark-text);
+        }
+
+        /* Score Button Active / Hover States */
+        .score-btn:hover {
+            border-color: var(--primary-dark-green);
+            background: #FAFCFA;
+            transform: translateY(-2px);
+        }
+
+        .score-btn.active-selected {
+            background: var(--primary-dark-green);
+            border-color: var(--mustard-gold);
+            box-shadow: 0 6px 18px rgba(0, 87, 44, 0.25);
+        }
+
+        .score-btn.active-selected .score-number-badge {
+            background: var(--mustard-gold);
+            color: var(--primary-dark-green);
+        }
+
+        .score-btn.active-selected .score-text {
+            color: var(--white);
+        }
+
+        /* ==========================================================================
+           7. ACTION FOOTER (Save Button)
+           ========================================================================== */
+        .action-footer-row {
+            display: flex;
+            justify-content: flex-end;
+            padding-top: 12px;
+            border-top: 1px solid #EBF0EC;
+        }
+
+        .btn-save-evaluation {
+            background: var(--primary-dark-green);
+            color: var(--white);
+            border: none;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-size: 1.05rem;
+            font-weight: 800;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 14px rgba(0, 87, 44, 0.2);
+        }
+
+        .btn-save-evaluation:hover {
+            background: var(--deep-green);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 87, 44, 0.3);
+        }
+
+        /* Toast Popup */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--primary-dark-green);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            font-weight: 600;
+            font-size: 0.9rem;
+            z-index: 9999;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+            border-left: 5px solid var(--mustard-gold);
+        }
+
+        .toast.show { opacity: 1; transform: translateY(0); }
+
+        @media (max-width: 992px) {
+            .main-workspace { flex-direction: column; }
+            .sidebar { width: 100%; }
+            .comparison-grid { grid-template-columns: 1fr; }
+            .score-buttons-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body class="bg-wrapper">
+
+    <!-- Top Header Banner (No numbers or badges) -->
+    <header class="dashboard-header-bar">
+        <div class="header-brand-group">
+            <img src="./assets/ifsu-seal.png" alt="IFSU Official Seal" class="ifsu-header-logo">
+            <div class="header-title-container">
+                <h1>Relevance Evaluation</h1>
+                <p>Research Gap Identification System for IFSU Research Proposal Abstracts</p>
+            </div>
+        </div>
+        <div class="header-institution-info">
+            <div class="inst-name">Ifugao State University (IFSU)</div>
+            <div class="sub-text">Semantic Retrieval for Research Proposal Abstracts</div>
+        </div>
+    </header>
+
+    <div class="main-workspace">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <img src="./assets/ifsu-seal.png" alt="IFSU Official Seal" class="ifsu-sidebar-logo">
+                <div>
+                    <div style="font-weight:800; font-size:1rem;">IFSU RGIS</div>
+                    <div style="font-size:0.72rem; opacity:0.8;">Semantic Gap System</div>
+                </div>
+            </div>
+
+            <a href="./dashboard.html" class="nav-item"><i class="fa-solid fa-house" aria-hidden="true"></i> Dashboard</a>
+            <a href="./research-proposals.html" class="nav-item"><i class="fa-solid fa-file-lines" aria-hidden="true"></i> Research Proposals</a>
+            <a href="./literature-corpus.html" class="nav-item"><i class="fa-solid fa-book" aria-hidden="true"></i> Literature Corpus</a>
+            <a href="./model-retrieval.html" class="nav-item"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> Model Retrieval</a>
+            <a href="./retrieval-results.html" class="nav-item"><i class="fa-solid fa-list-check" aria-hidden="true"></i> Retrieval Results</a>
+            <a href="./relevance-evaluation.html" class="nav-item active" aria-current="page"><i class="fa-solid fa-user-check" aria-hidden="true"></i> Evaluation</a>
+            <a href="./evaluation-agreement.html" class="nav-item"><i class="fa-solid fa-chart-column" aria-hidden="true"></i> Evaluation Agreement</a>
+            <a href="./model-performance.html" class="nav-item"><i class="fa-solid fa-chart-column" aria-hidden="true"></i> Results & Comparison</a>
+            <a href="./reports-deployment.html" class="nav-item"><i class="fa-solid fa-file-export" aria-hidden="true"></i> Reports</a>
+            <a href="#settings" class="nav-item" onclick="navigate('Settings', event)"><i class="fa-solid fa-gear" aria-hidden="true"></i> Settings</a>
+            <a href="./index.html" class="nav-item logout-btn" onclick="logout(event)"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Logout</a>
+        </aside>
+
+        <!-- Full-Width Content Area (No right-side process explanation panel) -->
+        <main class="content-area">
+            
+            <div class="panel-card">
+                
+                <!-- 1. Expert Evaluation Title & Banner -->
+                <div class="evaluation-header-row">
+                    <div class="header-icon-gold">
+                        <i class="fa-solid fa-file-circle-check"></i>
+                    </div>
+                    <h2>Expert Evaluation</h2>
+                </div>
+
+                <div class="instruction-banner">
+                    <i class="fa-solid fa-people-arrows banner-people-icon"></i>
+                    <div class="instruction-text">
+                        Demo evaluation only. Two expert evaluators are described in this workflow; this sample does not save real ratings.
+                    </div>
+                </div>
+
+                <!-- 2. Side-by-Side Abstract Comparison Panels -->
+                <div class="comparison-grid">
+                    
+                    <!-- Query Abstract -->
+                    <div class="abstract-card">
+                        <div class="abstract-card-title">Query Abstract</div>
+                        <div class="abstract-content-box">
+                            Exploring the effectiveness of community-based learning approaches in improving science achievement among rural high school students in Ifugao.
+                        </div>
+                    </div>
+
+                    <!-- Retrieved Abstract -->
+                    <div class="abstract-card">
+                        <div class="abstract-card-title">Retrieved Abstract</div>
+                        <div class="abstract-content-box">
+                            This study examined the impact of community-based instruction on the science performance of secondary students in rural areas, focusing on student engagement and academic outcomes.
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- 3. Relevance Score Selector (0 - 2) -->
+                <div class="scoring-section">
+                    <span class="scoring-label">Relevance Score (0 – 2)</span>
+                    
+                    <div class="score-buttons-grid">
+                        <button type="button" class="score-btn" aria-pressed="false" onclick="selectScore(this, 0)">
+                            <div class="score-number-badge">0</div>
+                            <div class="score-text">Not Relevant</div>
+                        </button>
+
+                        <button type="button" class="score-btn active-selected" aria-pressed="true" onclick="selectScore(this, 1)">
+                            <div class="score-number-badge">1</div>
+                            <div class="score-text">Partially Relevant</div>
+                        </button>
+
+                        <button type="button" class="score-btn" aria-pressed="false" onclick="selectScore(this, 2)">
+                            <div class="score-number-badge">2</div>
+                            <div class="score-text">Highly Relevant</div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 4. Save Evaluation Action Button -->
+                <div class="action-footer-row">
+                    <button class="btn-save-evaluation" onclick="saveEvaluation()">
+                        <i class="fa-solid fa-floppy-disk"></i>
+                        <span>Save Evaluation</span>
+                    </button>
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <script>
+        let currentSelectedScore = 1;
+
+        let currentUserName;
+        try {
+            currentUserName = window.sessionStorage.getItem('ifsu-sage-demo-username');
+        } catch (error) {
+            console.error('Unable to read the demo session:', error);
+            window.location.replace('./index.html');
+        }
+
+        if (!currentUserName) {
+            window.location.replace('./index.html');
+        } else {
+            const userName = document.createElement('div');
+            userName.className = 'user-name';
+            userName.textContent = `Signed in as ${currentUserName}`;
+            document.querySelector('.header-institution-info').append(userName);
+
+            if ('serviceWorker' in navigator && window.isSecureContext) {
+                navigator.serviceWorker.register('./service-worker.js')
+                    .catch((error) => console.error('Service worker registration failed:', error));
+            }
+        }
+
+        let toastTimeout;
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            window.clearTimeout(toastTimeout);
+            toastTimeout = window.setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        function selectScore(element, score) {
+            currentSelectedScore = score;
+            document.querySelectorAll('.score-btn').forEach((btn) => {
+                const isSelected = btn === element;
+                btn.classList.toggle('active-selected', isSelected);
+                btn.setAttribute('aria-pressed', String(isSelected));
+            });
+            element.classList.add('active-selected');
+            
+            const scoreLabels = ["Not Relevant", "Partially Relevant", "Highly Relevant"];
+            showToast(`Selected Score: ${score} (${scoreLabels[score]})`);
+        }
+
+        function saveEvaluation() {
+            showToast(`Demo only: selected score ${currentSelectedScore}; no evaluation was saved.`);
+        }
+
+        function navigate(moduleName, event) {
+            if (event) event.preventDefault();
+            showToast(`${moduleName} is a demo placeholder and is not available yet.`);
+        }
+
+        function logout(event) {
+            if (event) event.preventDefault();
+            showToast('Logging out of the dashboard...');
+            window.setTimeout(() => {
+                try {
+                    window.sessionStorage.removeItem('ifsu-sage-demo-username');
+                } catch (error) {
+                    console.error('Unable to clear the demo session:', error);
+                    showToast('Unable to end the session in this browser. Please try again.');
+                    return;
+                }
+                window.location.assign('./index.html');
+            }, 800);
+        }
+    </script>
+</body>
+</html>

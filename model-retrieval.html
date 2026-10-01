@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#00572C">
+    <meta name="description" content="Configure a sample IFSU SAGE semantic retrieval run.">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="ifsu-icon.svg" type="image/svg+xml">
+    <title>Model Retrieval - IFSU RGIS</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        /* ==========================================================================
+           1. VISUAL IDENTITY & THEME VARIABLES
+           ========================================================================== */
+        :root {
+            --primary-dark-green: #00572C;
+            --secondary-green: #00743B;
+            --deep-green: #003D22;
+            --mustard-gold: #F5B800;
+            --light-gold: #FFD95A;
+            --white: #FFFFFF;
+            --soft-bg: #F7F8F5;
+            --dark-text: #10261B;
+            --muted-text: #66756D;
+            --card-border: rgba(230, 235, 232, 0.9);
+            --font-family: 'Inter', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: var(--font-family);
+        }
+
+        body, html {
+            height: 100%;
+            width: 100%;
+            background-color: var(--soft-bg);
+            color: var(--dark-text);
+            overflow-x: hidden;
+        }
+
+        /* Campus Background Overlay */
+        .bg-wrapper {
+            min-height: 100vh;
+            width: 100%;
+            background: linear-gradient(135deg, #e8f0e9, #f7f8f5 55%, #f5efd9);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ==========================================================================
+           2. HEADER BANNER (Without numbers or badges)
+           ========================================================================== */
+        .dashboard-header-bar {
+            background: linear-gradient(135deg, #003D22, #00572C);
+            color: var(--white);
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 4px solid var(--mustard-gold);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+
+        .header-brand-group {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .ifsu-header-logo {
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
+            filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.25));
+        }
+
+        .header-title-container h1 {
+            font-size: 1.45rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .header-title-container p {
+            font-size: 0.85rem;
+            opacity: 0.85;
+            margin-top: 2px;
+        }
+
+        .header-institution-info {
+            text-align: right;
+        }
+
+        .header-institution-info .inst-name {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--mustard-gold);
+        }
+
+        .header-institution-info .sub-text {
+            font-size: 0.78rem;
+            opacity: 0.85;
+        }
+
+        .header-institution-info .user-name {
+            margin-top: 4px;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.76rem;
+        }
+
+        /* ==========================================================================
+           3. MAIN WORKSPACE (Sidebar + Full-Width Content Area)
+           ========================================================================== */
+        .main-workspace {
+            display: flex;
+            flex: 1;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            width: 270px;
+            background: linear-gradient(180deg, #003D22 0%, #00572C 100%);
+            border-radius: 20px;
+            padding: 22px 16px;
+            color: var(--white);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+            flex-shrink: 0;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 18px;
+            border-bottom: 1px solid rgba(255,255,255,0.15);
+            margin-bottom: 12px;
+        }
+
+        .ifsu-sidebar-logo {
+            width: 44px;
+            height: 44px;
+            object-fit: contain;
+            background: #FFFFFF;
+            border-radius: 50%;
+            padding: 2px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .sidebar-brand text {
+            font-weight: 800;
+            font-size: 1.1rem;
+            line-height: 1.2;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 13px 18px;
+            border-radius: 12px;
+            color: rgba(255,255,255,0.85);
+            text-decoration: none;
+            font-size: 0.92rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: var(--mustard-gold);
+            color: var(--primary-dark-green);
+            font-weight: 700;
+        }
+
+        .nav-item.logout-btn {
+            margin-top: auto;
+            color: #FF9999;
+        }
+
+        .nav-item.logout-btn:hover {
+            background: rgba(255, 77, 77, 0.2);
+            color: #FF6666;
+        }
+
+        /* Expanded Workspace Panel */
+        .content-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 100%;
+        }
+
+        .panel-card {
+            background: rgba(255, 255, 255, 0.96);
+            border-radius: 20px;
+            border: 1px solid var(--card-border);
+            padding: 28px;
+            box-shadow: 0 6px 25px rgba(0,0,0,0.06);
+            backdrop-filter: blur(4px);
+        }
+
+        /* ==========================================================================
+           4. MODULE TITLE & SUBTITLE
+           ========================================================================== */
+        .module-header-box {
+            margin-bottom: 24px;
+        }
+
+        .module-header-box h2 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--dark-text);
+        }
+
+        .module-header-box p {
+            font-size: 0.92rem;
+            color: var(--muted-text);
+            margin-top: 4px;
+        }
+
+        /* ==========================================================================
+           5. TWO-COLUMN CONFIGURATION GRID
+           ========================================================================== */
+        .retrieval-config-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.1fr;
+            gap: 24px;
+        }
+
+        /* Left Column Card (Select Models & Settings) */
+        .config-card {
+            background: var(--soft-bg);
+            border-radius: 16px;
+            border: 1px solid #E3ECE6;
+            padding: 22px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .card-title-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .step-circle {
+            width: 32px;
+            height: 32px;
+            background: var(--mustard-gold);
+            color: var(--primary-dark-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 0.95rem;
+            flex-shrink: 0;
+        }
+
+        .card-title-text {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--dark-text);
+        }
+
+        /* Model Custom Checkboxes */
+        .models-checkbox-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .custom-checkbox-card {
+            background: var(--white);
+            border: 2px solid #CBD5E1;
+            border-radius: 12px;
+            padding: 14px 18px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+            text-align: left;
+        }
+
+        .custom-checkbox-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 87, 44, 0.1);
+        }
+
+        .custom-checkbox-card[aria-pressed="true"] {
+            border-color: var(--primary-dark-green);
+        }
+
+        .checkbox-box {
+            width: 24px;
+            height: 24px;
+            background: var(--primary-dark-green);
+            color: var(--white);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .model-name {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--dark-text);
+        }
+
+        /* Accordion for Model Settings (Optional) */
+        .optional-settings-accordion {
+            background: var(--white);
+            border: 1px solid #DDF0E5;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .accordion-header {
+            padding: 14px 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            background: #FAFCFA;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--dark-text);
+            user-select: none;
+            width: 100%;
+            border: 0;
+            text-align: left;
+        }
+
+        .accordion-header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .accordion-content {
+            padding: 18px;
+            border-top: 1px solid #DDF0E5;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .setting-field-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .setting-label {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--dark-text);
+        }
+
+        .setting-input {
+            width: 100px;
+            height: 38px;
+            padding: 0 12px;
+            border: 1px solid #CDE2D6;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: var(--dark-text);
+            text-align: right;
+            outline: none;
+        }
+
+        .setting-input:focus {
+            border-color: var(--primary-dark-green);
+        }
+
+        /* Custom Toggle Switch for GPU */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 48px;
+            height: 26px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            inset: 0;
+            background-color: #CBD5E1;
+            transition: .3s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary-dark-green);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(22px);
+        }
+
+        /* Right Column Card (Retrieval Parameters & Execution) */
+        .param-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .param-label {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--dark-text);
+        }
+
+        .param-select {
+            width: 100%;
+            height: 48px;
+            padding: 0 16px;
+            border: 1px solid #CDE2D6;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            color: var(--dark-text);
+            background: var(--white);
+            outline: none;
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2000572C' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            background-size: 16px;
+        }
+
+        .param-select:focus {
+            border-color: var(--primary-dark-green);
+            box-shadow: 0 0 0 3px rgba(0, 87, 44, 0.12);
+        }
+
+        .btn-run-retrieval {
+            height: 52px;
+            background: var(--primary-dark-green);
+            color: var(--white);
+            border: none;
+            border-radius: 12px;
+            font-size: 1.05rem;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.2s ease;
+            margin-top: 10px;
+            box-shadow: 0 4px 14px rgba(0, 87, 44, 0.2);
+        }
+
+        .btn-run-retrieval:hover {
+            background: var(--deep-green);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 87, 44, 0.3);
+        }
+
+        /* Toast Popup */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--primary-dark-green);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            font-weight: 600;
+            font-size: 0.9rem;
+            z-index: 9999;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+            border-left: 5px solid var(--mustard-gold);
+        }
+
+        .toast.show { opacity: 1; transform: translateY(0); }
+
+        @media (max-width: 992px) {
+            .main-workspace { flex-direction: column; }
+            .sidebar { width: 100%; }
+            .retrieval-config-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body class="bg-wrapper">
+
+    <!-- Top Header Banner (No numbers or badges) -->
+    <header class="dashboard-header-bar">
+        <div class="header-brand-group">
+            <img src="./assets/ifsu-seal.png" alt="IFSU Official Seal" class="ifsu-header-logo">
+            <div class="header-title-container">
+                <h1>Model Retrieval</h1>
+                <p>Research Gap Identification System for IFSU Research Proposal Abstracts</p>
+            </div>
+        </div>
+        <div class="header-institution-info">
+            <div class="inst-name">Ifugao State University (IFSU)</div>
+            <div class="sub-text">Semantic Retrieval for Research Proposal Abstracts</div>
+        </div>
+    </header>
+
+    <div class="main-workspace">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <img src="./assets/ifsu-seal.png" alt="IFSU Official Seal" class="ifsu-sidebar-logo">
+                <div>
+                    <div style="font-weight:800; font-size:1rem;">IFSU RGIS</div>
+                    <div style="font-size:0.72rem; opacity:0.8;">Semantic Gap System</div>
+                </div>
+            </div>
+
+            <a href="./dashboard.html" class="nav-item"><i class="fa-solid fa-house" aria-hidden="true"></i> Dashboard</a>
+            <a href="./research-proposals.html" class="nav-item"><i class="fa-solid fa-file-lines" aria-hidden="true"></i> Research Proposals</a>
+            <a href="./literature-corpus.html" class="nav-item"><i class="fa-solid fa-book" aria-hidden="true"></i> Literature Corpus</a>
+            <a href="./model-retrieval.html" class="nav-item active" aria-current="page"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> Model Retrieval</a>
+            <a href="./retrieval-results.html" class="nav-item" onclick="navigate('Retrieval Results', event)"><i class="fa-solid fa-list-check" aria-hidden="true"></i> Retrieval Results</a>
+            <a href="./relevance-evaluation.html" class="nav-item"><i class="fa-solid fa-user-check" aria-hidden="true"></i> Evaluation</a>
+            <a href="./evaluation-agreement.html" class="nav-item"><i class="fa-solid fa-chart-column" aria-hidden="true"></i> Evaluation Agreement</a>
+            <a href="./model-performance.html" class="nav-item"><i class="fa-solid fa-chart-column" aria-hidden="true"></i> Results & Comparison</a>
+            <a href="./reports-deployment.html" class="nav-item"><i class="fa-solid fa-file-export" aria-hidden="true"></i> Reports</a>
+            <a href="#settings" class="nav-item" onclick="navigate('Settings', event)"><i class="fa-solid fa-gear" aria-hidden="true"></i> Settings</a>
+            <a href="./index.html" class="nav-item logout-btn" onclick="logout(event)"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Logout</a>
+        </aside>
+
+        <!-- Full-Width Content Area (No right-side process explanation panel) -->
+        <main class="content-area">
+            
+            <div class="panel-card">
+                
+                <!-- 1. Module Title & Subtitle -->
+                <div class="module-header-box">
+                    <h2>Model Retrieval</h2>
+                    <p>Select embedding models and run a semantic search.</p>
+                </div>
+
+                <!-- 2. Two-Column Retrieval Configuration Grid -->
+                <div class="retrieval-config-grid">
+                    
+                    <!-- Left Column: Step 1 Select Models & Settings -->
+                    <div class="config-card">
+                        <div class="card-title-row">
+                            <div class="step-circle">1</div>
+                            <div class="card-title-text">Select Models</div>
+                        </div>
+
+                        <!-- Model Selection Checkboxes -->
+                        <div class="models-checkbox-list">
+                            <button type="button" class="custom-checkbox-card" aria-pressed="false" onclick="toggleModelCheckbox(this)">
+                                <div class="checkbox-box"><i class="fa-solid fa-check"></i></div>
+                                <div class="model-name">SPECTER2</div>
+                            </button>
+
+                            <button type="button" class="custom-checkbox-card" aria-pressed="false" onclick="toggleModelCheckbox(this)">
+                                <div class="checkbox-box"><i class="fa-solid fa-check"></i></div>
+                                <div class="model-name">SciNCL</div>
+                            </button>
+
+                            <button type="button" class="custom-checkbox-card" aria-pressed="false" onclick="toggleModelCheckbox(this)">
+                                <div class="checkbox-box"><i class="fa-solid fa-check"></i></div>
+                                <div class="model-name">all-MiniLM-L6-v2</div>
+                            </button>
+                        </div>
+
+                        <!-- Accordion for Optional Model Settings -->
+                        <div class="optional-settings-accordion">
+                            <button type="button" class="accordion-header" id="accordionToggle" aria-expanded="true" aria-controls="accordionContent" onclick="toggleAccordion()">
+                                <div class="accordion-header-left">
+                                    <i class="fa-solid fa-gear"></i>
+                                    <span>Model Settings (Optional)</span>
+                                </div>
+                                <i class="fa-solid fa-chevron-up" id="accordionChevron" aria-hidden="true"></i>
+                            </button>
+
+                            <div class="accordion-content" id="accordionContent">
+                                <div class="setting-field-row">
+                                    <span class="setting-label">Max Sequence Length</span>
+                                    <input type="number" class="setting-input" value="512">
+                                </div>
+
+                                <div class="setting-field-row">
+                                    <span class="setting-label">Batch Size</span>
+                                    <input type="number" class="setting-input" value="32">
+                                </div>
+
+                                <div class="setting-field-row">
+                                    <span class="setting-label">Use GPU (if available)</span>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" checked>
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Right Column: Step 2 Retrieval Parameters & Execution -->
+                    <div class="config-card">
+                        <div class="card-title-row">
+                            <div class="step-circle">2</div>
+                            <div class="card-title-text">Retrieval Parameters</div>
+                        </div>
+
+                        <div class="param-group">
+                            <label class="param-label" for="top-k">Top K Results</label>
+                            <select class="param-select" id="top-k">
+                                <option value="10" selected>10</option>
+                                <option value="5">5</option>
+                                <option value="20">20</option>
+                                <option value="50">50</option>
+                            </select>
+                        </div>
+
+                        <div class="param-group">
+                            <label class="param-label" for="similarity-measure">Similarity Measure</label>
+                            <select class="param-select" id="similarity-measure">
+                                <option value="Cosine Similarity" selected>Cosine Similarity</option>
+                                <option value="Dot Product">Dot Product</option>
+                                <option value="Euclidean Distance">Euclidean Distance</option>
+                            </select>
+                        </div>
+
+                        <button class="btn-run-retrieval" onclick="runRetrieval()">
+                            <i class="fa-solid fa-play"></i>
+                            <span>Run Retrieval</span>
+                        </button>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <script>
+        let currentUserName;
+        try {
+            currentUserName = window.sessionStorage.getItem('ifsu-sage-demo-username');
+        } catch (error) {
+            console.error('Unable to read the demo session:', error);
+            window.location.replace('./index.html');
+        }
+
+        if (!currentUserName) {
+            window.location.replace('./index.html');
+        } else {
+            const userName = document.createElement('div');
+            userName.className = 'user-name';
+            userName.textContent = `Signed in as ${currentUserName}`;
+            document.querySelector('.header-institution-info').append(userName);
+
+            if ('serviceWorker' in navigator && window.isSecureContext) {
+                navigator.serviceWorker.register('./service-worker.js')
+                    .catch((error) => console.error('Service worker registration failed:', error));
+            }
+        }
+
+        let toastTimeout;
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            window.clearTimeout(toastTimeout);
+            toastTimeout = window.setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        function toggleModelCheckbox(card) {
+            const box = card.querySelector('.checkbox-box');
+            const selected = card.getAttribute('aria-pressed') !== 'true';
+            card.setAttribute('aria-pressed', String(selected));
+            box.style.opacity = selected ? '1' : '0';
+        }
+
+        function toggleAccordion() {
+            const content = document.getElementById('accordionContent');
+            const chevron = document.getElementById('accordionChevron');
+            const button = document.getElementById('accordionToggle');
+            const expanded = button.getAttribute('aria-expanded') !== 'true';
+            button.setAttribute('aria-expanded', String(expanded));
+            content.style.display = expanded ? 'flex' : 'none';
+            chevron.classList.toggle('fa-chevron-up', expanded);
+            chevron.classList.toggle('fa-chevron-down', !expanded);
+        }
+
+        function runRetrieval() {
+            const selectedModels = Array.from(document.querySelectorAll('.custom-checkbox-card[aria-pressed="true"]'));
+            if (selectedModels.length === 0) {
+                showToast('Select at least one model to configure a demo retrieval.');
+                return;
+            }
+            const modelNames = selectedModels.map((model) => model.querySelector('.model-name').textContent).join(', ');
+            try {
+                window.sessionStorage.setItem('ifsu-sage-demo-retrieval-models', JSON.stringify(modelNames.split(', ')));
+            } catch (error) {
+                console.error('Unable to save the demo retrieval selection:', error);
+                showToast('Unable to save the demo selection in this browser.');
+                return;
+            }
+            showToast(`Demo only: selected ${modelNames}. Opening illustrative sample results.`);
+            window.setTimeout(() => window.location.assign('./retrieval-results.html'), 600);
+        }
+
+        function navigate(moduleName, event) {
+            if (event) event.preventDefault();
+            if (moduleName === 'Retrieval Results') {
+                window.location.assign('./retrieval-results.html');
+                return;
+            }
+            showToast(`${moduleName} is a demo placeholder and is not available yet.`);
+        }
+
+        function logout(event) {
+            if (event) event.preventDefault();
+            showToast('Logging out of the dashboard...');
+            window.setTimeout(() => {
+                try {
+                    window.sessionStorage.removeItem('ifsu-sage-demo-username');
+                } catch (error) {
+                    console.error('Unable to clear the demo session:', error);
+                    showToast('Unable to end the session in this browser. Please try again.');
+                    return;
+                }
+                window.location.assign('./index.html');
+            }, 800);
+        }
+    </script>
+</body>
+</html>

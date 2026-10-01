@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#00572C">
+    <meta name="description" content="Browse the IFSU SAGE sample research proposal query set.">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="ifsu-icon.svg" type="image/svg+xml">
+    <title>Research Proposals (Query Set) - IFSU RGIS</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        /* ==========================================================================
+           1. VISUAL IDENTITY & THEME VARIABLES
+           ========================================================================== */
+        :root {
+            --primary-dark-green: #00572C;
+            --secondary-green: #00743B;
+            --deep-green: #003D22;
+            --mustard-gold: #F5B800;
+            --light-gold: #FFD95A;
+            --white: #FFFFFF;
+            --soft-bg: #F7F8F5;
+            --dark-text: #10261B;
+            --muted-text: #66756D;
+            --card-border: rgba(230, 235, 232, 0.9);
+            --font-family: 'Inter', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: var(--font-family);
+        }
+
+        body, html {
+            height: 100%;
+            width: 100%;
+            background-color: var(--soft-bg);
+            color: var(--dark-text);
+            overflow-x: hidden;
+        }
+
+        /* Campus Overlay Background */
+        .bg-wrapper {
+            min-height: 100vh;
+            width: 100%;
+            background: linear-gradient(135deg, #e8f0e9, #f7f8f5 55%, #f5efd9);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ==========================================================================
+           2. HEADER BANNER (Screen Title without numbers/badges)
+           ========================================================================== */
+        .dashboard-header-bar {
+            background: linear-gradient(135deg, #003D22, #00572C);
+            color: var(--white);
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 4px solid var(--mustard-gold);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+
+        .header-brand-group {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .ifsu-header-logo {
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
+            filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.25));
+        }
+
+        .header-title-container h1 {
+            font-size: 1.45rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .header-title-container p {
+            font-size: 0.85rem;
+            opacity: 0.85;
+            margin-top: 2px;
+        }
+
+        .header-institution-info {
+            text-align: right;
+        }
+
+        .header-institution-info .inst-name {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--mustard-gold);
+        }
+
+        .header-institution-info .sub-text {
+            font-size: 0.78rem;
+            opacity: 0.85;
+        }
+
+        .header-institution-info .user-name {
+            margin-top: 4px;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.76rem;
+        }
+
+        /* ==========================================================================
+           3. MAIN LAYOUT (Sidebar + Full-Width Proposals Content)
+           ========================================================================== */
+        .main-workspace {
+            display: flex;
+            flex: 1;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            width: 270px;
+            background: linear-gradient(180deg, #003D22 0%, #00572C 100%);
+            border-radius: 20px;
+            padding: 22px 16px;
+            color: var(--white);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+            flex-shrink: 0;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 18px;
+            border-bottom: 1px solid rgba(255,255,255,0.15);
+            margin-bottom: 12px;
+        }
+
+        .ifsu-sidebar-logo {
+            width: 44px;
+            height: 44px;
+            object-fit: contain;
+            background: #FFFFFF;
+            border-radius: 50%;
+            padding: 2px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .sidebar-brand text {
+            font-weight: 800;
+            font-size: 1.1rem;
+            line-height: 1.2;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 13px 18px;
+            border-radius: 12px;
+            color: rgba(255,255,255,0.85);
+            text-decoration: none;
+            font-size: 0.92rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: var(--mustard-gold);
+            color: var(--primary-dark-green);
+            font-weight: 700;
+        }
+
+        .nav-item.logout-btn {
+            margin-top: auto;
+            color: #FF9999;
+        }
+
+        .nav-item.logout-btn:hover {
+            background: rgba(255, 77, 77, 0.2);
+            color: #FF6666;
+        }
+
+        /* Full Width Content Area */
+        .content-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 100%;
+        }
+
+        .panel-card {
+            background: rgba(255, 255, 255, 0.96);
+            border-radius: 20px;
+            border: 1px solid var(--card-border);
+            padding: 24px;
+            box-shadow: 0 6px 25px rgba(0,0,0,0.06);
+            backdrop-filter: blur(4px);
+        }
+
+        /* ==========================================================================
+           4. MODULE HEADER & ACTION BUTTONS
+           ========================================================================== */
+        .module-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .module-title-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .module-icon-badge {
+            width: 46px;
+            height: 46px;
+            background: var(--primary-dark-green);
+            color: var(--white);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+        }
+
+        .module-title-box h2 {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--dark-text);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-green-primary {
+            background: var(--primary-dark-green);
+            color: var(--white);
+            border: none;
+            padding: 10px 18px;
+            border-radius: 10px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-green-primary:hover {
+            background: var(--deep-green);
+            transform: translateY(-1px);
+        }
+
+        .btn-outline-green {
+            background: var(--white);
+            color: var(--primary-dark-green);
+            border: 1.5px solid var(--primary-dark-green);
+            padding: 10px 18px;
+            border-radius: 10px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-outline-green:hover {
+            background: #F0F7F3;
+        }
+
+        /* ==========================================================================
+           5. QUERY SET BANNER & SEARCH BAR
+           ========================================================================== */
+        .info-banner-gold {
+            background: #FEF8E7;
+            border-radius: 16px;
+            padding: 18px 22px;
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            border: 1px solid #F6E6BC;
+            margin-bottom: 20px;
+        }
+
+        .info-banner-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--light-gold);
+            color: #8A6600;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .info-banner-text h3 {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--dark-text);
+            margin-bottom: 4px;
+        }
+
+        .info-banner-text p {
+            font-size: 0.85rem;
+            color: var(--muted-text);
+            line-height: 1.4;
+        }
+
+        .search-box-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted-text);
+            font-size: 1.1rem;
+        }
+
+        .search-input {
+            width: 100%;
+            height: 48px;
+            padding: 0 20px 0 50px;
+            border: 1.5px solid var(--mustard-gold);
+            border-radius: 12px;
+            font-size: 0.92rem;
+            color: var(--dark-text);
+            background: var(--white);
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .search-input:focus {
+            box-shadow: 0 0 0 4px rgba(245, 184, 0, 0.2);
+        }
+
+        /* ==========================================================================
+           6. PROPOSALS DATA TABLE & ACTION BUTTONS
+           ========================================================================== */
+        .table-responsive {
+            overflow-x: auto;
+            margin-bottom: 20px;
+        }
+
+        .proposals-data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.88rem;
+        }
+
+        .proposals-data-table th {
+            background: #FEF8E7;
+            color: var(--dark-text);
+            padding: 14px 16px;
+            font-weight: 800;
+            text-align: left;
+            border-bottom: 2px solid #F4E2B8;
+        }
+
+        .proposals-data-table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #EBF0EC;
+            color: var(--dark-text);
+            vertical-align: middle;
+        }
+
+        .proposals-data-table tr:hover td {
+            background: #F8FCFA;
+        }
+
+        .status-badge-approved {
+            background: #EAF5ED;
+            color: #137333;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .action-icon-group {
+            display: flex;
+            gap: 6px;
+        }
+
+        .action-btn-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            border: 1px solid #DDF0E5;
+            background: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.85rem;
+        }
+
+        .action-btn-icon.view-btn { color: var(--primary-dark-green); }
+        .action-btn-icon.edit-btn { color: #D98200; }
+        .action-btn-icon.delete-btn { color: #D32F2F; }
+
+        .action-btn-icon:hover {
+            background: #F0F7F3;
+            transform: translateY(-1px);
+        }
+
+        /* ==========================================================================
+           7. PAGINATION FOOTER
+           ========================================================================== */
+        .pagination-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            color: var(--muted-text);
+        }
+
+        .pagination-controls {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .page-btn {
+            height: 36px;
+            padding: 0 12px;
+            border-radius: 8px;
+            border: 1px solid #DDF0E5;
+            background: var(--white);
+            color: var(--dark-text);
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .page-btn.active {
+            background: var(--primary-dark-green);
+            color: var(--white);
+            border-color: var(--primary-dark-green);
+            font-weight: 800;
+        }
+
+        .page-btn:hover:not(.active) {
+            background: #F0F7F3;
+        }
+
+        /* Toast Popup */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--primary-dark-green);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            font-weight: 600;
+            font-size: 0.9rem;
+            z-index: 9999;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+            border-left: 5px solid var(--mustard-gold);
+        }
+
+        .toast.show { opacity: 1; transform: translateY(0); }
+
+        @media (max-width: 992px) {
+            .main-workspace { flex-direction: column; }
+            .sidebar { width: 100%; }
+            .module-header-row { flex-direction: column; align-items: flex-start; gap: 14px; }
+            .pagination-row { flex-direction: column; gap: 12px; align-items: flex-start; }
+        }
+    </style>
+</head>
+<body class="bg-wrapper">
+
+    <!-- Top Header Banner (No numbers or badges) -->
+    <header class="dashboard-header-bar">
+        <div class="header-brand-group">
+            <img src="./assets/ifsu-seal.png" alt="IFSU Official Seal" class="ifsu-header-logo">
+            <div class="header-title-container">
+                <h1>Research Proposals (Query Set)</h1>
+                <p>Research Gap Identification System for IFSU Research Proposal Abstracts</p>
+            </div>
+        </div>
+        <div class="header-institution-info">
+            <div class="inst-name">Ifugao State University (IFSU)</div>
+            <div class="sub-text">Semantic Retrieval for Research Proposal Abstracts</div>
+        </div>
+    </header>
+
+    <div class="main-workspace">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <img src="./assets/ifsu-seal.png" alt="IFSU Official Seal" class="ifsu-sidebar-logo">
+                <div>
+                    <div style="font-weight:800; font-size:1rem;">IFSU RGIS</div>
+                    <div style="font-size:0.72rem; opacity:0.8;">Semantic Gap System</div>
+                </div>
+            </div>
+
+            <a href="./dashboard.html" class="nav-item"><i class="fa-solid fa-house" aria-hidden="true"></i> Dashboard</a>
+            <a href="./research-proposals.html" class="nav-item active" aria-current="page"><i class="fa-solid fa-file-lines" aria-hidden="true"></i> Research Proposals</a>
+            <a href="./literature-corpus.html" class="nav-item"><i class="fa-solid fa-book" aria-hidden="true"></i> Literature Corpus</a>
+            <a href="./model-retrieval.html" class="nav-item"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> Model Retrieval</a>
+            <a href="./retrieval-results.html" class="nav-item"><i class="fa-solid fa-list-check" aria-hidden="true"></i> Retrieval Results</a>
+            <a href="./relevance-evaluation.html" class="nav-item"><i class="fa-solid fa-user-check" aria-hidden="true"></i> Evaluation</a>
+            <a href="./evaluation-agreement.html" class="nav-item"><i class="fa-solid fa-chart-column" aria-hidden="true"></i> Evaluation Agreement</a>
+            <a href="./model-performance.html" class="nav-item"><i class="fa-solid fa-chart-column" aria-hidden="true"></i> Results & Comparison</a>
+            <a href="./reports-deployment.html" class="nav-item"><i class="fa-solid fa-file-export" aria-hidden="true"></i> Reports</a>
+            <a href="#settings" class="nav-item" onclick="navigate('Settings', event)"><i class="fa-solid fa-gear" aria-hidden="true"></i> Settings</a>
+            <a href="./index.html" class="nav-item logout-btn" onclick="logout(event)"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Logout</a>
+        </aside>
+
+        <!-- Full-Width Content Area (No right-side process explanation panel) -->
+        <main class="content-area">
+            
+            <div class="panel-card">
+                
+                <!-- 1. Module Header with Action Buttons -->
+                <div class="module-header-row">
+                    <div class="module-title-box">
+                        <div class="module-icon-badge">
+                            <i class="fa-solid fa-file-signature"></i>
+                        </div>
+                        <h2>Research Proposals (Query Set)</h2>
+                    </div>
+
+                    <div class="header-actions">
+                        <button class="btn-green-primary" onclick="showToast('Add Proposal Modal Opened')">
+                            <i class="fa-solid fa-plus"></i>
+                            <span>Add Proposal</span>
+                        </button>
+                        <button class="btn-outline-green" onclick="showToast('Import CSV Modal Opened')">
+                            <i class="fa-solid fa-file-import"></i>
+                            <span>Import (CSV)</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 2. Query Set Info Banner -->
+                <div class="info-banner-gold">
+                    <div class="info-banner-icon">
+                        <i class="fa-solid fa-file-lines"></i>
+                    </div>
+                    <div class="info-banner-text">
+                        <h3>Query Set: 50 approved IFSU proposal abstracts</h3>
+                        <p>These research proposals serve as the query set for identifying research gaps through semantic retrieval and similarity analysis.</p>
+                    </div>
+                </div>
+
+                <!-- 3. Search Bar -->
+                <div class="search-box-container">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="search" id="proposal-search" class="search-input" aria-label="Search proposals" placeholder="Search proposals by title, research area, or keywords...">
+                </div>
+
+                <!-- 4. Research Proposals Metadata Table -->
+                <div class="table-responsive">
+                    <table class="proposals-data-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 50px;">#</th>
+                                <th>Title</th>
+                                <th style="width: 180px;">Research Area</th>
+                                <th style="width: 130px;">Date Added</th>
+                                <th style="width: 130px;">Status</th>
+                                <th style="width: 120px; text-align: center;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr data-proposal-row>
+                                <td><strong>1</strong></td>
+                                <td>Sustainable Agriculture Practices among Ifugao Farmers</td>
+                                <td>Agriculture</td>
+                                <td>2026-01-10</td>
+                                <td><span class="status-badge-approved"><i class="fa-solid fa-circle-check"></i> Approved</span></td>
+                                <td>
+                                    <div class="action-icon-group" style="justify-content: center;">
+                                        <button class="action-btn-icon view-btn" title="View Proposal" onclick="showToast('Viewing Proposal #1')"><i class="fa-solid fa-eye"></i></button>
+                                        <button class="action-btn-icon edit-btn" title="Edit Proposal" onclick="showToast('Editing Proposal #1')"><i class="fa-solid fa-pen-to-square"></i></button>
+                                        <button class="action-btn-icon delete-btn" title="Delete Proposal" onclick="showToast('Deleting Proposal #1')"><i class="fa-solid fa-trash-can"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr data-proposal-row>
+                                <td><strong>2</strong></td>
+                                <td>Digital Learning Strategies in Rural High Schools</td>
+                                <td>Education</td>
+                                <td>2026-01-12</td>
+                                <td><span class="status-badge-approved"><i class="fa-solid fa-circle-check"></i> Approved</span></td>
+                                <td>
+                                    <div class="action-icon-group" style="justify-content: center;">
+                                        <button class="action-btn-icon view-btn" title="View Proposal" onclick="showToast('Viewing Proposal #2')"><i class="fa-solid fa-eye"></i></button>
+                                        <button class="action-btn-icon edit-btn" title="Edit Proposal" onclick="showToast('Editing Proposal #2')"><i class="fa-solid fa-pen-to-square"></i></button>
+                                        <button class="action-btn-icon delete-btn" title="Delete Proposal" onclick="showToast('Deleting Proposal #2')"><i class="fa-solid fa-trash-can"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr data-proposal-row>
+                                <td><strong>3</strong></td>
+                                <td>Indigenous Knowledge Preservation through Community-Based Education</td>
+                                <td>Social Science</td>
+                                <td>2026-01-15</td>
+                                <td><span class="status-badge-approved"><i class="fa-solid fa-circle-check"></i> Approved</span></td>
+                                <td>
+                                    <div class="action-icon-group" style="justify-content: center;">
+                                        <button class="action-btn-icon view-btn" title="View Proposal" onclick="showToast('Viewing Proposal #3')"><i class="fa-solid fa-eye"></i></button>
+                                        <button class="action-btn-icon edit-btn" title="Edit Proposal" onclick="showToast('Editing Proposal #3')"><i class="fa-solid fa-pen-to-square"></i></button>
+                                        <button class="action-btn-icon delete-btn" title="Delete Proposal" onclick="showToast('Deleting Proposal #3')"><i class="fa-solid fa-trash-can"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr data-proposal-row>
+                                <td><strong>4</strong></td>
+                                <td>Climate Change Adaptation in Upland Communities</td>
+                                <td>Environment</td>
+                                <td>2026-01-18</td>
+                                <td><span class="status-badge-approved"><i class="fa-solid fa-circle-check"></i> Approved</span></td>
+                                <td>
+                                    <div class="action-icon-group" style="justify-content: center;">
+                                        <button class="action-btn-icon view-btn" title="View Proposal" onclick="showToast('Viewing Proposal #4')"><i class="fa-solid fa-eye"></i></button>
+                                        <button class="action-btn-icon edit-btn" title="Edit Proposal" onclick="showToast('Editing Proposal #4')"><i class="fa-solid fa-pen-to-square"></i></button>
+                                        <button class="action-btn-icon delete-btn" title="Delete Proposal" onclick="showToast('Deleting Proposal #4')"><i class="fa-solid fa-trash-can"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr data-proposal-row>
+                                <td><strong>5</strong></td>
+                                <td>Local Governance and Participatory Development in Ifugao</td>
+                                <td>Public Administration</td>
+                                <td>2026-01-20</td>
+                                <td><span class="status-badge-approved"><i class="fa-solid fa-circle-check"></i> Approved</span></td>
+                                <td>
+                                    <div class="action-icon-group" style="justify-content: center;">
+                                        <button class="action-btn-icon view-btn" title="View Proposal" onclick="showToast('Viewing Proposal #5')"><i class="fa-solid fa-eye"></i></button>
+                                        <button class="action-btn-icon edit-btn" title="Edit Proposal" onclick="showToast('Editing Proposal #5')"><i class="fa-solid fa-pen-to-square"></i></button>
+                                        <button class="action-btn-icon delete-btn" title="Delete Proposal" onclick="showToast('Deleting Proposal #5')"><i class="fa-solid fa-trash-can"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- 5. Pagination Footer -->
+                <div class="pagination-row">
+                    <div id="proposal-count" aria-live="polite">Showing 1 to 5 of 5 sample records (50 in the demo query set)</div>
+                    <div class="pagination-controls">
+                        <button class="page-btn" onclick="showToast('Previous Page')">Previous</button>
+                        <button class="page-btn active">1</button>
+                        <button class="page-btn" onclick="showToast('Page 2')">2</button>
+                        <button class="page-btn" onclick="showToast('Page 3')">3</button>
+                        <button class="page-btn" onclick="showToast('Page 4')">4</button>
+                        <button class="page-btn" onclick="showToast('Page 5')">5</button>
+                        <span>...</span>
+                        <button class="page-btn" onclick="showToast('Page 10')">10</button>
+                        <button class="page-btn" onclick="showToast('Next Page')">Next</button>
+                    </div>
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <script>
+        let currentUserName;
+        try {
+            currentUserName = window.sessionStorage.getItem('ifsu-sage-demo-username');
+        } catch (error) {
+            console.error('Unable to read the demo session:', error);
+            window.location.replace('./index.html');
+        }
+
+        if (!currentUserName) {
+            window.location.replace('./index.html');
+        } else {
+            const userName = document.createElement('div');
+            userName.className = 'user-name';
+            userName.textContent = `Signed in as ${currentUserName}`;
+            document.querySelector('.header-institution-info').append(userName);
+
+            if ('serviceWorker' in navigator && window.isSecureContext) {
+                navigator.serviceWorker.register('./service-worker.js')
+                    .catch((error) => console.error('Service worker registration failed:', error));
+            }
+        }
+
+        let toastTimeout;
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            window.clearTimeout(toastTimeout);
+            toastTimeout = window.setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        function navigate(moduleName, event) {
+            if (event) event.preventDefault();
+            if (moduleName === 'Literature Corpus') {
+                window.location.assign('./literature-corpus.html');
+                return;
+            }
+            if (moduleName === 'Model Retrieval') {
+                window.location.assign('./model-retrieval.html');
+                return;
+            }
+            if (moduleName === 'Retrieval Results') {
+                window.location.assign('./retrieval-results.html');
+                return;
+            }
+            showToast(`${moduleName} is a demo placeholder and is not available yet.`);
+        }
+
+        function logout(event) {
+            if (event) event.preventDefault();
+            showToast('Logging out of the dashboard...');
+            window.setTimeout(() => {
+                try {
+                    window.sessionStorage.removeItem('ifsu-sage-demo-username');
+                } catch (error) {
+                    console.error('Unable to clear the demo session:', error);
+                    showToast('Unable to end the session in this browser. Please try again.');
+                    return;
+                }
+                window.location.assign('./index.html');
+            }, 800);
+        }
+
+        const searchInput = document.getElementById('proposal-search');
+        const proposalRows = Array.from(document.querySelectorAll('[data-proposal-row]'));
+        const proposalCount = document.getElementById('proposal-count');
+        searchInput.addEventListener('input', () => {
+            const query = searchInput.value.trim().toLocaleLowerCase();
+            const visibleRows = proposalRows.filter((row) => {
+                const matches = row.textContent.toLocaleLowerCase().includes(query);
+                row.hidden = !matches;
+                return matches;
+            });
+            const visibleCount = visibleRows.length;
+            proposalCount.textContent = visibleCount
+                ? `Showing 1 to ${visibleCount} of ${visibleCount} matching sample records (50 in the demo query set)`
+                : 'No matching sample proposals (50 records in the demo query set)';
+        });
+    </script>
+</body>
+</html>

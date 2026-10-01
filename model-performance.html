@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#00572C">
+    <meta name="description" content="Review illustrative IFSU SAGE embedding model benchmark comparisons.">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="ifsu-icon.svg" type="image/svg+xml">
+    <title>Model Performance Comparison - IFSU RGIS</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        /* ==========================================================================
+           1. VISUAL IDENTITY & THEME VARIABLES
+           ========================================================================== */
+        :root {
+            --primary-dark-green: #00572C;
+            --secondary-green: #00743B;
+            --deep-green: #003D22;
+            --mustard-gold: #F5B800;
+            --light-gold: #FFD95A;
+            --white: #FFFFFF;
+            --soft-bg: #F7F8F5;
+            --dark-text: #10261B;
+            --muted-text: #66756D;
+            --card-border: rgba(230, 235, 232, 0.9);
+            --font-family: 'Inter', sans-serif;
+            
+            /* Chart Bar Colors matching screenshot */
+            --specter-bar: #00572C;
+            --scincl-bar: #F5B800;
+            --minilm-bar: #71B583;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: var(--font-family);
+        }
+
+        body, html {
+            height: 100%;
+            width: 100%;
+            background-color: var(--soft-bg);
+            color: var(--dark-text);
+            overflow-x: hidden;
+        }
+
+        /* Campus Background Overlay */
+        .bg-wrapper {
+            min-height: 100vh;
+            width: 100%;
+            background: linear-gradient(135deg, #e8f0e9, #f7f8f5 55%, #f5efd9);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ==========================================================================
+           2. HEADER BANNER (Without numbers or badges)
+           ========================================================================== */
+        .dashboard-header-bar {
+            background: linear-gradient(135deg, #003D22, #00572C);
+            color: var(--white);
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 4px solid var(--mustard-gold);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+
+        .header-brand-group {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .ifsu-header-logo {
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
+            filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.25));
+        }
+
+        .header-title-container h1 {
+            font-size: 1.45rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .header-title-container p {
+            font-size: 0.85rem;
+            opacity: 0.85;
+            margin-top: 2px;
+        }
+
+        .header-institution-info {
+            text-align: right;
+        }
+
+        .header-institution-info .inst-name {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--mustard-gold);
+        }
+
+        .header-institution-info .sub-text {
+            font-size: 0.78rem;
+            opacity: 0.85;
+        }
+
+        .header-institution-info .user-name {
+            margin-top: 4px;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.76rem;
+        }
+
+        /* ==========================================================================
+           3. MAIN WORKSPACE (Sidebar + Full-Width Content Area)
+           ========================================================================== */
+        .main-workspace {
+            display: flex;
+            flex: 1;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            width: 270px;
+            background: linear-gradient(180deg, #003D22 0%, #00572C 100%);
+            border-radius: 20px;
+            padding: 22px 16px;
+            color: var(--white);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+            flex-shrink: 0;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 18px;
+            border-bottom: 1px solid rgba(255,255,255,0.15);
+            margin-bottom: 12px;
+        }
+
+        .ifsu-sidebar-logo {
+            width: 44px;
+            height: 44px;
+            object-fit: contain;
+            background: #FFFFFF;
+            border-radius: 50%;
+            padding: 2px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .sidebar-brand text {
+            font-weight: 800;
+            font-size: 1.1rem;
+            line-height: 1.2;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 13px 18px;
+            border-radius: 12px;
+            color: rgba(255,255,255,0.85);
+            text-decoration: none;
+            font-size: 0.92rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: var(--mustard-gold);
+            color: var(--primary-dark-green);
+            font-weight: 700;
+        }
+
+        .nav-item.logout-btn {
+            margin-top: auto;
+            color: #FF9999;
+        }
+
+        .nav-item.logout-btn:hover {
+            background: rgba(255, 77, 77, 0.2);
+            color: #FF6666;
+        }
+
+        /* Expanded Workspace Panel */
+        .content-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 100%;
+        }
+
+        .panel-card {
+            background: rgba(255, 255, 255, 0.96);
+            border-radius: 20px;
+            border: 1px solid var(--card-border);
+            padding: 28px;
+            box-shadow: 0 6px 25px rgba(0,0,0,0.06);
+            backdrop-filter: blur(4px);
+        }
+
+        /* ==========================================================================
+           4. MODULE TITLE & FILTER TABS
+           ========================================================================== */
+        .module-header-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 6px;
+        }
+
+        .header-icon-gold {
+            width: 48px;
+            height: 48px;
+            background: var(--mustard-gold);
+            color: var(--primary-dark-green);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+        }
+
+        .module-header-row h2 {
+            font-size: 1.55rem;
+            font-weight: 800;
+            color: var(--dark-text);
+        }
+
+        .module-description {
+            font-size: 0.9rem;
+            color: var(--muted-text);
+            margin-left: 62px;
+            margin-bottom: 22px;
+        }
+
+        /* Quick Switcher Filter Tabs */
+        .metric-tabs-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .metric-tab-btn {
+            height: 46px;
+            border-radius: 12px;
+            border: 1px solid #DDF0E5;
+            background: #FEF8E7;
+            color: var(--dark-text);
+            font-weight: 700;
+            font-size: 0.92rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .metric-tab-btn.active {
+            background: var(--primary-dark-green);
+            color: var(--white);
+            border-color: var(--primary-dark-green);
+            box-shadow: 0 4px 12px rgba(0, 87, 44, 0.2);
+        }
+
+        .metric-tab-btn:hover:not(.active) {
+            background: #F8E8C2;
+        }
+
+        /* ==========================================================================
+           5. 2x2 PERFORMANCE CHARTS GRID
+           ========================================================================== */
+        .charts-grid-2x2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .chart-card {
+            background: var(--white);
+            border: 1px solid #E2E8E4;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chart-card-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--dark-text);
+            margin-bottom: 20px;
+        }
+
+        .info-icon-gold {
+            color: var(--mustard-gold);
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        /* Custom SVG Bar Chart Container */
+        .chart-body-wrapper {
+            height: 180px;
+            width: 100%;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            padding-bottom: 25px;
+            position: relative;
+            border-bottom: 2px solid #E2E8E4;
+        }
+
+        /* Y-Axis Grid Guidelines */
+        .grid-line {
+            position: absolute;
+            left: 0;
+            right: 0;
+            border-top: 1px dashed #EAEAEA;
+            z-index: 1;
+        }
+
+        .bar-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 2;
+            width: 80px;
+            position: relative;
+        }
+
+        .bar-value-label {
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: var(--dark-text);
+            margin-bottom: 6px;
+        }
+
+        .bar-element {
+            width: 52px;
+            border-radius: 6px 6px 0 0;
+            transition: height 0.6s ease;
+        }
+
+        .bar-specter { background: var(--specter-bar); }
+        .bar-scincl { background: var(--scincl-bar); }
+        .bar-minilm { background: var(--minilm-bar); }
+
+        .x-axis-labels-row {
+            display: flex;
+            justify-content: space-around;
+            padding-top: 8px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--dark-text);
+        }
+
+        .x-label-item {
+            width: 80px;
+            text-align: center;
+        }
+
+        /* ==========================================================================
+           6. KEY FINDINGS & DECISION SUMMARY PANEL
+           ========================================================================== */
+        .summary-card {
+            background: #EAF5ED;
+            border: 1px solid #CDE6D3;
+            border-radius: 16px;
+            padding: 22px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .summary-card-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--primary-dark-green);
+        }
+
+        .summary-cards-subgrid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .finding-box {
+            border-radius: 14px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .finding-box.specter-box {
+            background: #D8EFE0;
+            border: 1px solid #BFE3CA;
+        }
+
+        .finding-box.minilm-box {
+            background: #FEF8E7;
+            border: 1px solid #F6E6BC;
+        }
+
+        .finding-icon {
+            font-size: 2rem;
+            flex-shrink: 0;
+        }
+
+        .specter-box .finding-icon { color: var(--primary-dark-green); }
+        .minilm-box .finding-icon { color: #8A6600; }
+
+        .finding-text-box h4 {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--dark-text);
+            margin-bottom: 2px;
+        }
+
+        .finding-text-box p {
+            font-size: 0.85rem;
+            color: var(--muted-text);
+            line-height: 1.35;
+        }
+
+        /* Toast Popup */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--primary-dark-green);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            font-weight: 600;
+            font-size: 0.9rem;
+            z-index: 9999;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+            border-left: 5px solid var(--mustard-gold);
+        }
+
+        .toast.show { opacity: 1; transform: translateY(0); }
+
+        @media (max-width: 992px) {
+            .main-workspace { flex-direction: column; }
+            .sidebar { width: 100%; }
+            .charts-grid-2x2 { grid-template-columns: 1fr; }
+            .summary-cards-subgrid { grid-template-columns: 1fr; }
+            .metric-tabs-row { grid-template-columns: repeat(2, 1fr); }
+            .module-description { margin-left: 0; }
+        }
+    </style>
+</head>
+<body class="bg-wrapper">
+
+    <!-- Top Header Banner (No numbers or badges) -->
+    <header class="dashboard-header-bar">
+        <div class="header-brand-group">
+            <img src="./assets/ifsu-seal.png" alt="IFSU Official Seal" class="ifsu-header-logo">
+            <div class="header-title-container">
+                <h1>Model Performance Comparison</h1>
+                <p>Research Gap Identification System for IFSU Research Proposal Abstracts</p>
+            </div>
+        </div>
+        <div class="header-institution-info">
+            <div class="inst-name">Ifugao State University (IFSU)</div>
+            <div class="sub-text">Semantic Retrieval for Research Proposal Abstracts</div>
+        </div>
+    </header>
+
+    <div class="main-workspace">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <img src="./assets/ifsu-seal.png" alt="IFSU Official Seal" class="ifsu-sidebar-logo">
+                <div>
+                    <div style="font-weight:800; font-size:1rem;">IFSU RGIS</div>
+                    <div style="font-size:0.72rem; opacity:0.8;">Semantic Gap System</div>
+                </div>
+            </div>
+
+            <a href="./dashboard.html" class="nav-item"><i class="fa-solid fa-house" aria-hidden="true"></i> Dashboard</a>
+            <a href="./research-proposals.html" class="nav-item"><i class="fa-solid fa-file-lines" aria-hidden="true"></i> Research Proposals</a>
+            <a href="./literature-corpus.html" class="nav-item"><i class="fa-solid fa-book" aria-hidden="true"></i> Literature Corpus</a>
+            <a href="./model-retrieval.html" class="nav-item"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> Model Retrieval</a>
+            <a href="./retrieval-results.html" class="nav-item"><i class="fa-solid fa-list-check" aria-hidden="true"></i> Retrieval Results</a>
+            <a href="./relevance-evaluation.html" class="nav-item"><i class="fa-solid fa-user-check" aria-hidden="true"></i> Evaluation</a>
+            <a href="./evaluation-agreement.html" class="nav-item"><i class="fa-solid fa-chart-column" aria-hidden="true"></i> Evaluation Agreement</a>
+            <a href="./model-performance.html" class="nav-item active" aria-current="page"><i class="fa-solid fa-chart-column" aria-hidden="true"></i> Results & Comparison</a>
+            <a href="./reports-deployment.html" class="nav-item"><i class="fa-solid fa-file-export" aria-hidden="true"></i> Reports</a>
+            <a href="#settings" class="nav-item" onclick="navigate('Settings', event)"><i class="fa-solid fa-gear" aria-hidden="true"></i> Settings</a>
+            <a href="./index.html" class="nav-item logout-btn" onclick="logout(event)"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Logout</a>
+        </aside>
+
+        <!-- Full-Width Content Area (No right-side process explanation panel) -->
+        <main class="content-area">
+            
+            <div class="panel-card">
+                
+                <!-- 1. Module Title & Description -->
+                <div class="module-header-row">
+                    <div class="header-icon-gold">
+                        <i class="fa-solid fa-chart-column"></i>
+                    </div>
+                    <h2>Model Performance Comparison</h2>
+                </div>
+                <p class="module-description">Demo comparison only: all benchmark values below are illustrative sample data, not measured results.</p>
+
+                <!-- 2. Metric Quick Switcher Tabs -->
+                <div class="metric-tabs-row">
+                    <button class="metric-tab-btn active" onclick="switchMetricTab(this, 'Precision@10')">Precision@10</button>
+                    <button class="metric-tab-btn" onclick="switchMetricTab(this, 'nDCG@10')">nDCG@10</button>
+                    <button class="metric-tab-btn" onclick="switchMetricTab(this, 'Query Latency (ms)')">Query Latency (ms)</button>
+                    <button class="metric-tab-btn" onclick="switchMetricTab(this, 'Peak VRAM (MB)')">Peak VRAM (MB)</button>
+                </div>
+
+                <!-- 3. 2x2 Benchmark Charts Grid -->
+                <div class="charts-grid-2x2">
+                    
+                    <!-- Chart 1: Precision@10 Comparison -->
+                    <div class="chart-card">
+                        <div class="chart-card-header">
+                            <span>Precision@10 Comparison</span>
+                            <i class="fa-solid fa-circle-info info-icon-gold" title="Measures the proportion of relevant documents retrieved in the top 10 results."></i>
+                        </div>
+                        <div class="chart-body-wrapper">
+                            <div class="grid-line" style="bottom: 80%;"></div>
+                            <div class="grid-line" style="bottom: 50%;"></div>
+                            <div class="grid-line" style="bottom: 20%;"></div>
+
+                            <div class="bar-group">
+                                <span class="bar-value-label">0.603</span>
+                                <div class="bar-element bar-specter" style="height: 110px;"></div>
+                            </div>
+                            <div class="bar-group">
+                                <span class="bar-value-label">0.569</span>
+                                <div class="bar-element bar-scincl" style="height: 100px;"></div>
+                            </div>
+                            <div class="bar-group">
+                                <span class="bar-value-label">0.483</span>
+                                <div class="bar-element bar-minilm" style="height: 82px;"></div>
+                            </div>
+                        </div>
+                        <div class="x-axis-labels-row">
+                            <span class="x-label-item">SPECTER2</span>
+                            <span class="x-label-item">SciNCL</span>
+                            <span class="x-label-item">all-MiniLM-L6-v2</span>
+                        </div>
+                    </div>
+
+                    <!-- Chart 2: nDCG@10 Comparison -->
+                    <div class="chart-card">
+                        <div class="chart-card-header">
+                            <span>nDCG@10 Comparison</span>
+                            <i class="fa-solid fa-circle-info info-icon-gold" title="Normalized Discounted Cumulative Gain at rank 10."></i>
+                        </div>
+                        <div class="chart-body-wrapper">
+                            <div class="grid-line" style="bottom: 80%;"></div>
+                            <div class="grid-line" style="bottom: 50%;"></div>
+                            <div class="grid-line" style="bottom: 20%;"></div>
+
+                            <div class="bar-group">
+                                <span class="bar-value-label">0.776</span>
+                                <div class="bar-element bar-specter" style="height: 125px;"></div>
+                            </div>
+                            <div class="bar-group">
+                                <span class="bar-value-label">0.747</span>
+                                <div class="bar-element bar-scincl" style="height: 118px;"></div>
+                            </div>
+                            <div class="bar-group">
+                                <span class="bar-value-label">0.642</span>
+                                <div class="bar-element bar-minilm" style="height: 98px;"></div>
+                            </div>
+                        </div>
+                        <div class="x-axis-labels-row">
+                            <span class="x-label-item">SPECTER2</span>
+                            <span class="x-label-item">SciNCL</span>
+                            <span class="x-label-item">all-MiniLM-L6-v2</span>
+                        </div>
+                    </div>
+
+                    <!-- Chart 3: Query Latency Comparison (ms) -->
+                    <div class="chart-card">
+                        <div class="chart-card-header">
+                            <span>Query Latency Comparison (ms)</span>
+                            <i class="fa-solid fa-circle-info info-icon-gold" title="Average search time per query in milliseconds."></i>
+                        </div>
+                        <div class="chart-body-wrapper">
+                            <div class="grid-line" style="bottom: 80%;"></div>
+                            <div class="grid-line" style="bottom: 50%;"></div>
+                            <div class="grid-line" style="bottom: 20%;"></div>
+
+                            <div class="bar-group">
+                                <span class="bar-value-label">19.24</span>
+                                <div class="bar-element bar-specter" style="height: 115px;"></div>
+                            </div>
+                            <div class="bar-group">
+                                <span class="bar-value-label">20.53</span>
+                                <div class="bar-element bar-scincl" style="height: 122px;"></div>
+                            </div>
+                            <div class="bar-group">
+                                <span class="bar-value-label">4.26</span>
+                                <div class="bar-element bar-minilm" style="height: 30px;"></div>
+                            </div>
+                        </div>
+                        <div class="x-axis-labels-row">
+                            <span class="x-label-item">SPECTER2</span>
+                            <span class="x-label-item">SciNCL</span>
+                            <span class="x-label-item">all-MiniLM-L6-v2</span>
+                        </div>
+                    </div>
+
+                    <!-- Chart 4: Peak VRAM Usage Comparison (MB) -->
+                    <div class="chart-card">
+                        <div class="chart-card-header">
+                            <span>Peak VRAM Usage Comparison (MB)</span>
+                            <i class="fa-solid fa-circle-info info-icon-gold" title="Maximum GPU memory consumed during inference."></i>
+                        </div>
+                        <div class="chart-body-wrapper">
+                            <div class="grid-line" style="bottom: 80%;"></div>
+                            <div class="grid-line" style="bottom: 50%;"></div>
+                            <div class="grid-line" style="bottom: 20%;"></div>
+
+                            <div class="bar-group">
+                                <span class="bar-value-label">1,853</span>
+                                <div class="bar-element bar-specter" style="height: 118px;"></div>
+                            </div>
+                            <div class="bar-group">
+                                <span class="bar-value-label">1,906</span>
+                                <div class="bar-element bar-scincl" style="height: 124px;"></div>
+                            </div>
+                            <div class="bar-group">
+                                <span class="bar-value-label">621</span>
+                                <div class="bar-element bar-minilm" style="height: 45px;"></div>
+                            </div>
+                        </div>
+                        <div class="x-axis-labels-row">
+                            <span class="x-label-item">SPECTER2</span>
+                            <span class="x-label-item">SciNCL</span>
+                            <span class="x-label-item">all-MiniLM-L6-v2</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- 4. Key Findings & Decision Summary Box -->
+                <div class="summary-card">
+                    <div class="summary-card-title">
+                        <i class="fa-solid fa-lightbulb"></i>
+                        <span>Key Findings & Decision Summary</span>
+                    </div>
+
+                    <div class="summary-cards-subgrid">
+                        <div class="finding-box specter-box">
+                            <div class="finding-icon"><i class="fa-solid fa-trophy"></i></div>
+                            <div class="finding-text-box">
+                                <h4>SPECTER2</h4>
+                                <p>leads effectiveness and ranking quality, with the highest Precision@10 and nDCG@10.</p>
+                            </div>
+                        </div>
+
+                        <div class="finding-box minilm-box">
+                            <div class="finding-icon"><i class="fa-solid fa-leaf"></i></div>
+                            <div class="finding-text-box">
+                                <h4>all-MiniLM-L6-v2</h4>
+                                <p>leads computational efficiency, with the lowest query latency and lower VRAM usage.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <script>
+        let currentUserName;
+        try {
+            currentUserName = window.sessionStorage.getItem('ifsu-sage-demo-username');
+        } catch (error) {
+            console.error('Unable to read the demo session:', error);
+            window.location.replace('./index.html');
+        }
+
+        if (!currentUserName) {
+            window.location.replace('./index.html');
+        } else {
+            const userName = document.createElement('div');
+            userName.className = 'user-name';
+            userName.textContent = `Signed in as ${currentUserName}`;
+            document.querySelector('.header-institution-info').append(userName);
+
+            if ('serviceWorker' in navigator && window.isSecureContext) {
+                navigator.serviceWorker.register('./service-worker.js')
+                    .catch((error) => console.error('Service worker registration failed:', error));
+            }
+        }
+
+        let toastTimeout;
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            window.clearTimeout(toastTimeout);
+            toastTimeout = window.setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        function switchMetricTab(btn, metricName) {
+            document.querySelectorAll('.metric-tab-btn').forEach((button) => {
+                const isActive = button === btn;
+                button.classList.toggle('active', isActive);
+                button.setAttribute('aria-pressed', String(isActive));
+            });
+            btn.classList.add('active');
+            showToast(`Demo comparison: selected ${metricName}. Sample chart values are unchanged.`);
+        }
+
+        function navigate(moduleName, event) {
+            if (event) event.preventDefault();
+            showToast(`${moduleName} is a demo placeholder and is not available yet.`);
+        }
+
+        function logout(event) {
+            if (event) event.preventDefault();
+            showToast('Logging out of the dashboard...');
+            window.setTimeout(() => {
+                try {
+                    window.sessionStorage.removeItem('ifsu-sage-demo-username');
+                } catch (error) {
+                    console.error('Unable to clear the demo session:', error);
+                    showToast('Unable to end the session in this browser. Please try again.');
+                    return;
+                }
+                window.location.assign('./index.html');
+            }, 800);
+        }
+    </script>
+</body>
+</html>

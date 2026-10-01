@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#00572C">
+    <meta name="description" content="Review sample ranked abstracts from an IFSU SAGE retrieval demo.">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="ifsu-icon.svg" type="image/svg+xml">
+    <title>Retrieval Results - IFSU RGIS</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        /* ==========================================================================
+           1. VISUAL IDENTITY & THEME VARIABLES
+           ========================================================================== */
+        :root {
+            --primary-dark-green: #00572C;
+            --secondary-green: #00743B;
+            --deep-green: #003D22;
+            --mustard-gold: #F5B800;
+            --light-gold: #FFD95A;
+            --white: #FFFFFF;
+            --soft-bg: #F7F8F5;
+            --dark-text: #10261B;
+            --muted-text: #66756D;
+            --card-border: rgba(230, 235, 232, 0.9);
+            --font-family: 'Inter', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: var(--font-family);
+        }
+
+        body, html {
+            height: 100%;
+            width: 100%;
+            background-color: var(--soft-bg);
+            color: var(--dark-text);
+            overflow-x: hidden;
+        }
+
+        /* Campus Background Overlay */
+        .bg-wrapper {
+            min-height: 100vh;
+            width: 100%;
+            background: linear-gradient(135deg, #e8f0e9, #f7f8f5 55%, #f5efd9);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ==========================================================================
+           2. HEADER BANNER (Without numbers or badges)
+           ========================================================================== */
+        .dashboard-header-bar {
+            background: linear-gradient(135deg, #003D22, #00572C);
+            color: var(--white);
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 4px solid var(--mustard-gold);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+
+        .header-brand-group {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .ifsu-header-logo {
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
+            filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.25));
+        }
+
+        .header-title-container h1 {
+            font-size: 1.45rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .header-title-container p {
+            font-size: 0.85rem;
+            opacity: 0.85;
+            margin-top: 2px;
+        }
+
+        .header-institution-info {
+            text-align: right;
+        }
+
+        .header-institution-info .inst-name {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--mustard-gold);
+        }
+
+        .header-institution-info .sub-text {
+            font-size: 0.78rem;
+            opacity: 0.85;
+        }
+
+        .header-institution-info .user-name {
+            margin-top: 4px;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.76rem;
+        }
+
+        /* ==========================================================================
+           3. MAIN WORKSPACE (Sidebar + Full-Width Content Area)
+           ========================================================================== */
+        .main-workspace {
+            display: flex;
+            flex: 1;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            width: 270px;
+            background: linear-gradient(180deg, #003D22 0%, #00572C 100%);
+            border-radius: 20px;
+            padding: 22px 16px;
+            color: var(--white);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+            flex-shrink: 0;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 18px;
+            border-bottom: 1px solid rgba(255,255,255,0.15);
+            margin-bottom: 12px;
+        }
+
+        .ifsu-sidebar-logo {
+            width: 44px;
+            height: 44px;
+            object-fit: contain;
+            background: #FFFFFF;
+            border-radius: 50%;
+            padding: 2px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .sidebar-brand text {
+            font-weight: 800;
+            font-size: 1.1rem;
+            line-height: 1.2;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 13px 18px;
+            border-radius: 12px;
+            color: rgba(255,255,255,0.85);
+            text-decoration: none;
+            font-size: 0.92rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: var(--mustard-gold);
+            color: var(--primary-dark-green);
+            font-weight: 700;
+        }
+
+        .nav-item.logout-btn {
+            margin-top: auto;
+            color: #FF9999;
+        }
+
+        .nav-item.logout-btn:hover {
+            background: rgba(255, 77, 77, 0.2);
+            color: #FF6666;
+        }
+
+        /* Expanded Workspace Panel */
+        .content-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 100%;
+        }
+
+        .panel-card {
+            background: rgba(255, 255, 255, 0.96);
+            border-radius: 20px;
+            border: 1px solid var(--card-border);
+            padding: 24px;
+            box-shadow: 0 6px 25px rgba(0,0,0,0.06);
+            backdrop-filter: blur(4px);
+        }
+
+        /* ==========================================================================
+           4. GOLD HEADER BANNER & MODEL TABS
+           ========================================================================== */
+        .results-header-banner {
+            background: var(--mustard-gold);
+            border-radius: 14px 14px 0 0;
+            padding: 16px 22px;
+            margin: -24px -24px 20px -24px;
+        }
+
+        .results-header-banner h2 {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--dark-text);
+        }
+
+        .results-description-text {
+            font-size: 0.88rem;
+            color: var(--muted-text);
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        /* Model Switcher Tabs */
+        .model-tabs-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 22px;
+        }
+
+        .model-tab-btn {
+            flex: 1;
+            height: 48px;
+            border-radius: 12px;
+            border: 1.5px solid #CDE2D6;
+            background: var(--white);
+            color: var(--dark-text);
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .model-tab-btn.active {
+            background: var(--primary-dark-green);
+            color: var(--white);
+            border-color: var(--primary-dark-green);
+            box-shadow: 0 4px 12px rgba(0, 87, 44, 0.2);
+        }
+
+        .model-tab-btn:hover:not(.active) {
+            background: #F0F7F3;
+            border-color: var(--primary-dark-green);
+        }
+
+        /* ==========================================================================
+           5. RANKED RESULTS DATA TABLE
+           ========================================================================== */
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        .results-data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.88rem;
+        }
+
+        .results-data-table th {
+            background: #FEF8E7;
+            color: var(--dark-text);
+            padding: 14px 16px;
+            font-weight: 800;
+            text-align: left;
+            border-bottom: 2px solid #F4E2B8;
+        }
+
+        .results-data-table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #EBF0EC;
+            color: var(--dark-text);
+            vertical-align: middle;
+        }
+
+        .results-data-table tr:hover td {
+            background: #F8FCFA;
+        }
+
+        .similarity-score-text {
+            font-weight: 800;
+            color: var(--primary-dark-green);
+        }
+
+        .action-eye-btn {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            border: none;
+            background: var(--primary-dark-green);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+            margin: 0 auto;
+        }
+
+        .action-eye-btn:hover {
+            background: var(--deep-green);
+            transform: scale(1.1);
+        }
+
+        /* Toast Popup */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--primary-dark-green);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            font-weight: 600;
+            font-size: 0.9rem;
+            z-index: 9999;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+            border-left: 5px solid var(--mustard-gold);
+        }
+
+        .toast.show { opacity: 1; transform: translateY(0); }
+
+        @media (max-width: 992px) {
+            .main-workspace { flex-direction: column; }
+            .sidebar { width: 100%; }
+            .model-tabs-row { flex-direction: column; }
+        }
+    </style>
+</head>
+<body class="bg-wrapper">
+
+    <!-- Top Header Banner (No numbers or badges) -->
+    <header class="dashboard-header-bar">
+        <div class="header-brand-group">
+            <img src="./assets/ifsu-seal.png" alt="IFSU Official Seal" class="ifsu-header-logo">
+            <div class="header-title-container">
+                <h1>Retrieval Results</h1>
+                <p>Research Gap Identification System for IFSU Research Proposal Abstracts</p>
+            </div>
+        </div>
+        <div class="header-institution-info">
+            <div class="inst-name">Ifugao State University (IFSU)</div>
+            <div class="sub-text">Semantic Retrieval for Research Proposal Abstracts</div>
+        </div>
+    </header>
+
+    <div class="main-workspace">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <img src="./assets/ifsu-seal.png" alt="IFSU Official Seal" class="ifsu-sidebar-logo">
+                <div>
+                    <div style="font-weight:800; font-size:1rem;">IFSU RGIS</div>
+                    <div style="font-size:0.72rem; opacity:0.8;">Semantic Gap System</div>
+                </div>
+            </div>
+
+            <a href="./dashboard.html" class="nav-item"><i class="fa-solid fa-house" aria-hidden="true"></i> Dashboard</a>
+            <a href="./research-proposals.html" class="nav-item"><i class="fa-solid fa-file-lines" aria-hidden="true"></i> Research Proposals</a>
+            <a href="./literature-corpus.html" class="nav-item"><i class="fa-solid fa-book" aria-hidden="true"></i> Literature Corpus</a>
+            <a href="./model-retrieval.html" class="nav-item"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> Model Retrieval</a>
+            <a href="./retrieval-results.html" class="nav-item active" aria-current="page"><i class="fa-solid fa-list-check" aria-hidden="true"></i> Retrieval Results</a>
+            <a href="./relevance-evaluation.html" class="nav-item"><i class="fa-solid fa-user-check" aria-hidden="true"></i> Evaluation</a>
+            <a href="./evaluation-agreement.html" class="nav-item"><i class="fa-solid fa-chart-column" aria-hidden="true"></i> Evaluation Agreement</a>
+            <a href="./model-performance.html" class="nav-item"><i class="fa-solid fa-chart-column" aria-hidden="true"></i> Results & Comparison</a>
+            <a href="./reports-deployment.html" class="nav-item"><i class="fa-solid fa-file-export" aria-hidden="true"></i> Reports</a>
+            <a href="#settings" class="nav-item" onclick="navigate('Settings', event)"><i class="fa-solid fa-gear" aria-hidden="true"></i> Settings</a>
+            <a href="./index.html" class="nav-item logout-btn" onclick="logout(event)"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Logout</a>
+        </aside>
+
+        <!-- Full-Width Content Area (No right-side process explanation panel) -->
+        <main class="content-area">
+            
+            <div class="panel-card">
+                
+                <!-- 1. Yellow Header Banner -->
+                <div class="results-header-banner">
+                    <h2 id="activeModelTitle">Top Retrieved Abstracts (Example: SPECTER2)</h2>
+                </div>
+
+                <!-- 2. Subtitle Description Text -->
+                <p class="results-description-text">
+                    Demo preview only: these sample scores and abstracts are illustrative and were not produced by a live retrieval run.
+                </p>
+
+                <!-- 3. Model Switcher Tabs -->
+                <div class="model-tabs-row">
+                    <button class="model-tab-btn active" onclick="switchModelTab(this, 'SPECTER2')">SPECTER2</button>
+                    <button class="model-tab-btn" onclick="switchModelTab(this, 'SciNCL')">SciNCL</button>
+                    <button class="model-tab-btn" onclick="switchModelTab(this, 'all-MiniLM-L6-v2')">all-MiniLM-L6-v2</button>
+                </div>
+
+                <!-- 4. Ranked Abstracts Data Table -->
+                <div class="table-responsive">
+                    <table class="results-data-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 70px; text-align: center;">Rank</th>
+                                <th>Title</th>
+                                <th style="width: 150px; text-align: center;">Similarity Score</th>
+                                <th style="width: 200px;">Source</th>
+                                <th style="width: 90px; text-align: center;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resultsTableBody">
+                            <tr>
+                                <td style="text-align: center;"><strong>1</strong></td>
+                                <td>Enhancing Student Engagement through Community-Based Learning...</td>
+                                <td style="text-align: center;"><span class="similarity-score-text">0.892</span></td>
+                                <td>Education Journal</td>
+                                <td><button class="action-eye-btn" title="View Full Abstract" onclick="showToast('Viewing Candidate Abstract Rank #1')"><i class="fa-solid fa-eye"></i></button></td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: center;"><strong>2</strong></td>
+                                <td>Digital Tools in Rural Schools: Opportunities and Challenges...</td>
+                                <td style="text-align: center;"><span class="similarity-score-text">0.876</span></td>
+                                <td>Education Review</td>
+                                <td><button class="action-eye-btn" title="View Full Abstract" onclick="showToast('Viewing Candidate Abstract Rank #2')"><i class="fa-solid fa-eye"></i></button></td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: center;"><strong>3</strong></td>
+                                <td>Teacher Professional Development for Inclusive Education Practices...</td>
+                                <td style="text-align: center;"><span class="similarity-score-text">0.845</span></td>
+                                <td>Education Journal</td>
+                                <td><button class="action-eye-btn" title="View Full Abstract" onclick="showToast('Viewing Candidate Abstract Rank #3')"><i class="fa-solid fa-eye"></i></button></td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: center;"><strong>4</strong></td>
+                                <td>Assessment Strategies in STEM Education: A Systematic Review...</td>
+                                <td style="text-align: center;"><span class="similarity-score-text">0.832</span></td>
+                                <td>Learning Studies</td>
+                                <td><button class="action-eye-btn" title="View Full Abstract" onclick="showToast('Viewing Candidate Abstract Rank #4')"><i class="fa-solid fa-eye"></i></button></td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: center;"><strong>5</strong></td>
+                                <td>Inclusive Education Practices in Indigenous Communities...</td>
+                                <td style="text-align: center;"><span class="similarity-score-text">0.821</span></td>
+                                <td>Education Policy</td>
+                                <td><button class="action-eye-btn" title="View Full Abstract" onclick="showToast('Viewing Candidate Abstract Rank #5')"><i class="fa-solid fa-eye"></i></button></td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: center;"><strong>6</strong></td>
+                                <td>Curriculum Innovation in Basic Education: Towards 21st Century Learning...</td>
+                                <td style="text-align: center;"><span class="similarity-score-text">0.801</span></td>
+                                <td>Curriculum Journal</td>
+                                <td><button class="action-eye-btn" title="View Full Abstract" onclick="showToast('Viewing Candidate Abstract Rank #6')"><i class="fa-solid fa-eye"></i></button></td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: center;"><strong>7</strong></td>
+                                <td>Blended Learning in Higher Education: Effects on Student Performance...</td>
+                                <td style="text-align: center;"><span class="similarity-score-text">0.794</span></td>
+                                <td>Higher Education</td>
+                                <td><button class="action-eye-btn" title="View Full Abstract" onclick="showToast('Viewing Candidate Abstract Rank #7')"><i class="fa-solid fa-eye"></i></button></td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: center;"><strong>8</strong></td>
+                                <td>Community-based Learning Approaches in Rural Schools...</td>
+                                <td style="text-align: center;"><span class="similarity-score-text">0.782</span></td>
+                                <td>Community Dev. Journal</td>
+                                <td><button class="action-eye-btn" title="View Full Abstract" onclick="showToast('Viewing Candidate Abstract Rank #8')"><i class="fa-solid fa-eye"></i></button></td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: center;"><strong>9</strong></td>
+                                <td>Indigenous Knowledge in Education: Integrating Local Contexts...</td>
+                                <td style="text-align: center;"><span class="similarity-score-text">0.771</span></td>
+                                <td>Social Science Review</td>
+                                <td><button class="action-eye-btn" title="View Full Abstract" onclick="showToast('Viewing Candidate Abstract Rank #9')"><i class="fa-solid fa-eye"></i></button></td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: center;"><strong>10</strong></td>
+                                <td>Technology-enhanced Instruction in Multigrade Classrooms...</td>
+                                <td style="text-align: center;"><span class="similarity-score-text">0.760</span></td>
+                                <td>EdTech Journal</td>
+                                <td><button class="action-eye-btn" title="View Full Abstract" onclick="showToast('Viewing Candidate Abstract Rank #10')"><i class="fa-solid fa-eye"></i></button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <script>
+        let currentUserName;
+        try {
+            currentUserName = window.sessionStorage.getItem('ifsu-sage-demo-username');
+        } catch (error) {
+            console.error('Unable to read the demo session:', error);
+            window.location.replace('./index.html');
+        }
+
+        if (!currentUserName) {
+            window.location.replace('./index.html');
+        } else {
+            const userName = document.createElement('div');
+            userName.className = 'user-name';
+            userName.textContent = `Signed in as ${currentUserName}`;
+            document.querySelector('.header-institution-info').append(userName);
+
+            if ('serviceWorker' in navigator && window.isSecureContext) {
+                navigator.serviceWorker.register('./service-worker.js')
+                    .catch((error) => console.error('Service worker registration failed:', error));
+            }
+
+            try {
+                const selectedModels = JSON.parse(window.sessionStorage.getItem('ifsu-sage-demo-retrieval-models') || '[]');
+                if (Array.isArray(selectedModels) && selectedModels.length > 0 && selectedModels.every((model) => typeof model === 'string')) {
+                    switchModelTab(null, selectedModels[0], false);
+                }
+            } catch (error) {
+                console.error('Unable to read the demo retrieval selection:', error);
+                showToast('Unable to load the saved demo model selection.');
+            }
+        }
+
+        let toastTimeout;
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            window.clearTimeout(toastTimeout);
+            toastTimeout = window.setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        function switchModelTab(btn, modelName, announce = true) {
+            // Update Active Tab Button UI
+            const tab = btn || Array.from(document.querySelectorAll('.model-tab-btn'))
+                .find((button) => button.textContent.trim() === modelName);
+            if (!tab) {
+                console.error(`No retrieval tab found for model: ${modelName}`);
+                return;
+            }
+            document.querySelectorAll('.model-tab-btn').forEach((button) => {
+                const isActive = button === tab;
+                button.classList.toggle('active', isActive);
+                button.setAttribute('aria-pressed', String(isActive));
+            });
+
+            // Update Section Header Text
+            document.getElementById('activeModelTitle').textContent = `Top Retrieved Abstracts (Example: ${modelName})`;
+
+            if (announce) showToast(`Demo preview: showing sample results for ${modelName}.`);
+        }
+
+        function navigate(moduleName, event) {
+            if (event) event.preventDefault();
+            showToast(`${moduleName} is a demo placeholder and is not available yet.`);
+        }
+
+        function logout(event) {
+            if (event) event.preventDefault();
+            showToast('Logging out of the dashboard...');
+            window.setTimeout(() => {
+                try {
+                    window.sessionStorage.removeItem('ifsu-sage-demo-username');
+                } catch (error) {
+                    console.error('Unable to clear the demo session:', error);
+                    showToast('Unable to end the session in this browser. Please try again.');
+                    return;
+                }
+                window.location.assign('./index.html');
+            }, 800);
+        }
+    </script>
+</body>
+</html>
